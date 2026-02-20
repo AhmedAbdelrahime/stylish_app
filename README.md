@@ -34,10 +34,11 @@ Language: Dart
 
 Backend: supabase
 
-Database: Cloud Firestore
+Database: Cloud subapase
 
 Auth: Firebase Authentication
 
 State Management: Bloc 
 
 Architecture: Clean Architecture 
+
