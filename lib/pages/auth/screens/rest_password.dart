@@ -33,13 +33,14 @@ class _ResetPasswordState extends State<ResetPassword> {
     super.dispose();
   }
 
-  Future<void> ResetPassword() async {
+  Future<void> resetPassword() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
         isloading = true;
       });
       try {
         await _authService.updatePassword(newPassword: _passControler.text);
+        if (!mounted) return;
 
         AppSnackBar.show(
           context: context,
@@ -56,6 +57,7 @@ class _ResetPasswordState extends State<ResetPassword> {
           MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       } catch (e) {
+        if (!mounted) return;
         final readableMessage = SupabaseErrorMapper.map(e);
 
         AppSnackBar.show(
@@ -124,7 +126,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                             radius: 20,
                           )
                         : CustomButton(
-                            ontap: ResetPassword,
+                            ontap: resetPassword,
                             text: "Reset Password",
                           ),
 

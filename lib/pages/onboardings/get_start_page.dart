@@ -12,58 +12,45 @@ class GetStartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: DecoratedBox(
         decoration: BoxDecoration(
-          image: DecorationImage(
+          image: const DecorationImage(
             fit: BoxFit.fill,
-
             image: AssetImage('assets/images/get_start.png'),
           ),
         ),
-
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-          child: Container(
-            // decoration: BoxDecoration(
-            //   gradient: LinearGradient(
-            //     // begin: Alignment(0.50, -0.00),
-            //     // end: Alignment(0.50, 1.00),
-            //     colors: [
-            //       Colors.black.withValues(alpha: 0),
-            //       Colors.black.withValues(alpha: 0.63),
-            //     ],
-            //   ),
-            // ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                CustomText(
-                  text: 'You want Authentic, here you go!',
-                  size: 30,
-                  weight: FontWeight.bold,
-                  color: AppColors.primaryColor,
-                ),
-                Gap(10),
-                CustomText(
-                  text: 'Find it here, buy it now!',
-                  size: 14,
-                  weight: FontWeight.w400,
-                  color: AppColors.primaryColor,
-                ),
-                Gap(20),
-
-                CustomButton(
-                  ontap: () async {
-                    await OnboardingService.setSeenOnboarding();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    );
-                  },
-                  text: 'Get Start',
-                ),
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CustomText(
+                text: 'Everything you need, all in one place.',
+                size: 30,
+                weight: FontWeight.bold,
+                color: AppColors.primaryColor,
+              ),
+              const Gap(10),
+              CustomText(
+                text:
+                    'Shop smart, checkout fast, and enjoy a better way to buy.',
+                size: 14,
+                weight: FontWeight.w400,
+                color: AppColors.primaryColor,
+              ),
+              const Gap(20),
+              CustomButton(
+                ontap: () async {
+                  await OnboardingService.setSeenOnboarding();
+                  if (!context.mounted) return;
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  );
+                },
+                text: 'Get Started',
+              ),
+            ],
           ),
         ),
       ),

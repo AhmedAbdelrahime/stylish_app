@@ -8,6 +8,7 @@ class UserModel {
   final String? state;
   final String? country;
   final String? pincode;
+  final String? role;
 
   const UserModel({
     required this.userId,
@@ -19,9 +20,17 @@ class UserModel {
     this.state,
     this.country,
     this.pincode,
+    this.role,
   });
 
+  bool get isAdmin {
+    final normalizedRole = role?.trim().toLowerCase();
+    return normalizedRole == 'admin';
+  }
+
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    final rawRole = json['role'];
+
     return UserModel(
       userId: json['id'],
       email: json['email'],
@@ -32,6 +41,7 @@ class UserModel {
       state: json['state'],
       country: json['country'],
       pincode: json['pincode'],
+      role: rawRole is String ? rawRole : null,
     );
   }
 

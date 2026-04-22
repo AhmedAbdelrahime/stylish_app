@@ -12,12 +12,15 @@ class ProductAppBar extends StatelessWidget {
     this.showbackicon = true,
     this.isSettingpage = false,
     this.logout,
+    this.onActionTap,
   });
+
   final String? text;
   final double? padiing;
   final bool? showbackicon;
   final bool? isSettingpage;
   final VoidCallback? logout;
+  final VoidCallback? onActionTap;
 
   @override
   Widget build(BuildContext context) {
@@ -32,19 +35,23 @@ class ProductAppBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
+            onTap: showbackicon == true
+                ? () {
+                    Navigator.maybePop(context);
+                  }
+                : null,
             child: showbackicon == true
-                ? Icon(Icons.arrow_back_ios_new, color: AppColors.hintColor)
-                : SizedBox(width: 70),
+                ? const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: AppColors.hintColor,
+                  )
+                : const SizedBox(width: 70),
           ),
-
           CustomText(text: text ?? '', size: 22, weight: FontWeight.w500),
           if (text == null)
             GestureDetector(
-              onTap: () {},
-              child: Icon(
+              onTap: onActionTap,
+              child: const Icon(
                 Icons.shopping_cart_outlined,
                 color: AppColors.hintColor,
               ),
@@ -55,13 +62,13 @@ class ProductAppBar extends StatelessWidget {
               child: Row(
                 children: [
                   SvgPicture.asset('assets/svgs/logout.svg'),
-                  Gap(5),
+                  const Gap(5),
                   CustomText(text: 'Logout', size: 16, weight: FontWeight.w400),
                 ],
               ),
             )
           else
-            SizedBox.shrink(),
+            const SizedBox.shrink(),
         ],
       ),
     );

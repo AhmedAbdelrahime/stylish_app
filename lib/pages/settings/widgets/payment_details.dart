@@ -39,21 +39,19 @@ class _PymentsDetailsState extends State<PymentsDetails> {
               widget.chekeout == true
                   ? setState(() {
                       selectedIndex = index;
-                      print(selectedIndex);
-                      print(widget.pymentMethod![index]);
                     })
                   : null;
             },
             child: Container(
-              margin: EdgeInsets.symmetric(vertical: 8),
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.5,
                   color: isSelected ? AppColors.redColor : Colors.transparent,
                 ),
                 borderRadius: BorderRadius.circular(12),
-                color: AppColors.grayColor.withOpacity(.3),
+                color: AppColors.grayColor.withValues(alpha: .3),
               ),
               child: Row(
                 children: [
@@ -61,7 +59,7 @@ class _PymentsDetailsState extends State<PymentsDetails> {
                     "assets/images/paymenticons/${widget.pymentMethod![index].brand}.png",
                     height: 30,
                   ),
-                  Spacer(),
+                  const Spacer(),
                   CustomText(
                     text: "**** **** **** ${widget.pymentMethod![index].last4}",
                     size: 16,
@@ -70,7 +68,7 @@ class _PymentsDetailsState extends State<PymentsDetails> {
                   ),
                   Gap(10),
                   widget.chekeout == true
-                      ? SizedBox.shrink()
+                      ? const SizedBox.shrink()
                       : GestureDetector(
                           onTap: () {
                             // Call onDelete callback with the current index

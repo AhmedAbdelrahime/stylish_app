@@ -1,12 +1,19 @@
 class OfferesModel {
-  final String image;
+  final String id;
+  final String imageUrl;
+  final String? title;
 
-  OfferesModel({required this.image});
+  OfferesModel({
+    required this.id,
+    required this.imageUrl,
+    this.title,
+  });
+
+  factory OfferesModel.fromJson(Map<String, dynamic> json) {
+    return OfferesModel(
+      id: json['id'] as String,
+      imageUrl: json['image_url'] as String,
+      title: json['title'] as String?,
+    );
+  }
 }
-
-List<OfferesModel> offeresData = [
-  OfferesModel(image: 'assets/images/offers/offer1.png'),
-  OfferesModel(image: 'assets/images/offers/offer2.png'),
-  OfferesModel(image: 'assets/images/offers/offer3.png'),
-  OfferesModel(image: 'assets/images/offers/offer4.png'),
-];

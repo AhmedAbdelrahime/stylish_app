@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class SupabaseErrorMapper {
   static String map(dynamic error) {
     // LOGIN
@@ -69,7 +71,9 @@ class SupabaseErrorMapper {
     if (error.contains('User not logged in')) {
       return 'User not logged in';
     }
-    print(error);
+    if (kDebugMode) {
+      debugPrint(error.toString());
+    }
     // ❓ Unknown
     return 'Something went wrong. Please try again.';
 

@@ -1,59 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:hungry/shared/custom_text.dart';
+import 'package:hungry/core/constants/app_colors.dart';
 
 class ViewSimalerSection extends StatelessWidget {
   const ViewSimalerSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(20, 8, 20, 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 8, 40, 8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.visibility_outlined, size: 24),
-                    Gap(10),
-                    CustomText(
-                      text: 'View Similar',
-                      size: 14,
-                      weight: FontWeight.w500,
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 8, 15, 8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.compare_arrows_outlined, size: 24),
-                    Gap(10),
-                    CustomText(
-                      text: 'Add to Compare',
-                      size: 14,
-                      weight: FontWeight.w500,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          Text(
+            'Similar To This',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              color: AppColors.blackColor,
+            ),
           ),
-          CustomText(text: 'Similar To', size: 22, weight: FontWeight.bold),
+          SizedBox(height: 4),
+          Text(
+            'Related picks based on the current product category.',
+            style: TextStyle(
+              fontSize: 13,
+              color: AppColors.hintColor,
+              height: 1.4,
+            ),
+          ),
         ],
       ),
     );

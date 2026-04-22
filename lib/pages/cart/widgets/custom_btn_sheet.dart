@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:hungry/pages/cart/widgets/cart_btn.dart';
 import 'package:hungry/shared/custom_text.dart';
@@ -6,13 +5,28 @@ import 'package:hungry/shared/custom_text.dart';
 class CustomBtnSheet extends StatelessWidget {
   const CustomBtnSheet({
     super.key,
+    required this.total,
+    required this.discountAmount,
+    required this.onProceed,
   });
+
+  final double total;
+  final double discountAmount;
+  final VoidCallback onProceed;
+
+  String get _formattedTotal {
+    if (total == total.roundToDouble()) {
+      return total.toStringAsFixed(0);
+    }
+
+    return total.toStringAsFixed(2);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
@@ -21,7 +35,7 @@ class CustomBtnSheet extends StatelessWidget {
           BoxShadow(
             color: Colors.grey.shade600,
             blurRadius: 20,
-            offset: Offset(0, 0),
+            offset: const Offset(0, 0),
           ),
         ],
       ),
@@ -35,29 +49,23 @@ class CustomBtnSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  text: '\$541',
+                  text: '\u20B9$_formattedTotal',
                   color: Colors.black,
                   weight: FontWeight.bold,
                   size: 24,
                 ),
                 CustomText(
-                  text: 'View Details',
+                  text: discountAmount > 0
+                      ? 'Discount included in total'
+                      : 'Includes shipping charges',
                   color: Colors.red,
                   weight: FontWeight.w500,
                   size: 13,
                 ),
               ],
             ),
-            Spacer(),
-            // isLoading
-            //     ? Center(
-            //         child: CupertinoActivityIndicator(
-            //           radius: 20,
-            //           color: AppColors.primaryColor,
-            //         ),
-            //       )
-            //     :
-            CartBtn(ontap: () {}, text: 'Proceed to Payment'),
+            const Spacer(),
+            CartBtn(ontap: onProceed, text: 'Proceed to Payment'),
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hungry/pages/settings/data/pyment_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -17,7 +18,9 @@ class PaymentService {
           .map((item) => PaymentMethod.fromJson(item))
           .toList();
     } catch (e) {
-      print('Error fetching payment methods: $e');
+      if (kDebugMode) {
+        debugPrint('Error fetching payment methods: $e');
+      }
       return [];
     }
   }
@@ -26,12 +29,12 @@ class PaymentService {
     final user = _supabase.auth.currentUser;
     if (user == null) throw Exception('Not authenticated');
 
-await _supabase.from('payment_methods').insert({
-  ...dto.toJson(),
-  'user_id': user.id,
-});
+    await _supabase.from('payment_methods').insert({
+      ...dto.toJson(),
+      'user_id': user.id,
+    });
   }
- 
+
   Future<void> deletePaymentMethod(String paymentMethodId) async {
     final user = _supabase.auth.currentUser;
     if (user == null) throw Exception('User not logged in');

@@ -37,9 +37,13 @@ class _ImageSectionWidgetState extends State<ImageSectionWidget> {
         File(picked.path),
       );
 
+      _user ??= await _profileService.getProfile();
+
+      if (!mounted || _user == null) return;
+
       await _profileService.updateProfileImage(
         userId: _user!.userId,
-        ImageUrl: imageUrl,
+        imageUrl: imageUrl,
       );
 
       setState(() {
@@ -47,6 +51,7 @@ class _ImageSectionWidgetState extends State<ImageSectionWidget> {
             '$imageUrl?v=${DateTime.now().microsecondsSinceEpoch}'; // ✅ URL مش path
       });
     } catch (e) {
+      if (!mounted) return;
       AppSnackBar.show(
         context: context,
         text: 'Failed to upload image',
@@ -59,7 +64,10 @@ class _ImageSectionWidgetState extends State<ImageSectionWidget> {
 
   Future<void> loadProfileImage() async {
     setState(() => isloadingImage = true);
-    _user = await _profileService.getProfile();
+    final profile = await _profileService.getProfile();
+    if (!mounted) return;
+
+    _user = profile;
     if (_user != null) {
       selctedimage = _user!.image;
     }

@@ -21,6 +21,7 @@ class SingupScreen extends StatefulWidget {
 }
 
 class _SingupScreenState extends State<SingupScreen> {
+  final TextEditingController _nameControler = TextEditingController();
   final TextEditingController _emailControler = TextEditingController();
   final TextEditingController _passControler = TextEditingController();
   final TextEditingController _confirmControler = TextEditingController();
@@ -30,6 +31,7 @@ class _SingupScreenState extends State<SingupScreen> {
 
   @override
   void dispose() {
+    _nameControler.dispose();
     _emailControler.dispose();
     _passControler.dispose();
     _confirmControler.dispose();
@@ -43,6 +45,7 @@ class _SingupScreenState extends State<SingupScreen> {
 
     try {
       await _authService.signUp(
+        fullName: _nameControler.text.trim(),
         email: _emailControler.text.trim(),
         password: _passControler.text.trim(),
       );
@@ -91,6 +94,7 @@ class _SingupScreenState extends State<SingupScreen> {
                 child: Column(
                   children: [
                     SinagupForm(
+                      nameControler: _nameControler,
                       emailControler: _emailControler,
                       passControler: _passControler,
                       confirmControler: _confirmControler,

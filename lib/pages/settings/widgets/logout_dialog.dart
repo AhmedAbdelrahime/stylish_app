@@ -25,8 +25,10 @@ class LogoutDialog extends StatelessWidget {
               isDeleteCard ?? false
                   ? 'assets/svgs/deleteCard.svg'
                   : 'assets/svgs/logout.svg',
-              //   'assets/svgs/logout.svg',
-              color: AppColors.redColor,
+              colorFilter: const ColorFilter.mode(
+                AppColors.redColor,
+                BlendMode.srcIn,
+              ),
               height: 60,
             ),
             const Gap(16),

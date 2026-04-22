@@ -4,7 +4,7 @@ import 'package:hungry/pages/auth/widgets/app_snackbar.dart';
 import 'package:hungry/pages/settings/data/profile_service.dart';
 import 'package:hungry/pages/settings/data/user_model.dart';
 import 'package:hungry/pages/settings/widgets/app_bar_section.dart';
-import 'package:hungry/pages/settings/widgets/custom_bottomSheet.dart';
+import 'package:hungry/pages/settings/widgets/custom_bottom_sheet.dart';
 import 'package:hungry/pages/settings/widgets/image_section_widget.dart';
 import 'package:hungry/pages/settings/widgets/payment_section.dart';
 import 'package:hungry/pages/settings/widgets/setting_form.dart';
@@ -48,7 +48,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> loadUserData() async {
     setState(() => isloadingData = true);
-    _user = await _profileService.getProfile();
+    final profile = await _profileService.getProfile();
+    if (!mounted) return;
+
+    _user = profile;
     if (_user != null) {
       nameController.text = _user!.name ?? '';
       emailController.text = _user!.email;
@@ -76,9 +79,9 @@ class _SettingsPageState extends State<SettingsPage> {
       image: _user!.image,
     );
     await _profileService.updateProfile(updatedUser);
+    if (!mounted) return;
     _user = updatedUser;
     setState(() => isloading = false);
-    if (!mounted) return;
     AppSnackBar.show(
       context: context,
       text: 'Profile updated successfully.',
@@ -120,6 +123,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ImageSectionWidget(),
+                          const SizedBox(height: 16),
+
                           SettingForm(
                             nameController: nameController,
                             emailController: emailController,
@@ -128,7 +133,6 @@ class _SettingsPageState extends State<SettingsPage> {
                             cityController: cityController,
                             stateController: stateController,
                             countryController: countryController,
-  
                           ),
                           PaymentSection(),
                         ],

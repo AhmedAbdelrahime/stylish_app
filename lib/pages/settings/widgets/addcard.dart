@@ -5,19 +5,27 @@ import 'package:hungry/pages/settings/view/add_pyment_card.dart';
 import 'package:hungry/shared/custom_text.dart';
 
 class AddCardButton extends StatelessWidget {
-  const AddCardButton({super.key});
+  const AddCardButton({super.key, this.onCardAdded});
+
+  final Future<void> Function()? onCardAdded;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AddPaymentCard()),
-      ),
+      onTap: () async {
+        final added = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(builder: (context) => const AddPaymentCard()),
+        );
+
+        if (added == true) {
+          await onCardAdded?.call();
+        }
+      },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 15),
+        padding: const EdgeInsets.symmetric(vertical: 15),
         decoration: BoxDecoration(
-          color: AppColors.grayColor.withOpacity(.2),
+          color: AppColors.grayColor.withValues(alpha: .2),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -27,12 +35,12 @@ class AddCardButton extends StatelessWidget {
               text: 'Add Card',
               size: 18,
               weight: FontWeight.w600,
-              color: AppColors.blackColor.withOpacity(.8),
+              color: AppColors.blackColor.withValues(alpha: .8),
             ),
-            Gap(10),
+            const Gap(10),
             Icon(
               Icons.payment_outlined,
-              color: AppColors.blackColor.withOpacity(.8),
+              color: AppColors.blackColor.withValues(alpha: .8),
             ),
           ],
         ),

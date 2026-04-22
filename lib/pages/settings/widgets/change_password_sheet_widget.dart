@@ -26,7 +26,6 @@ class _ChangePasswordSheetWidgetState extends State<ChangePasswordSheetWidget> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-
       await _authService.changePassword(newPasswordController.text.trim());
 
       if (!mounted) return;
@@ -38,22 +37,25 @@ class _ChangePasswordSheetWidgetState extends State<ChangePasswordSheetWidget> {
         backgroundColor: Colors.green,
       );
       await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
 
       // Security best practice
       await _authService.signOut();
     } catch (e) {
+      if (!mounted) return;
       final message = SupabaseErrorMapper.map(e.toString());
 
       debugPrint('handleChangePassword: $message');
       Navigator.of(context).pop();
       await Future.delayed(const Duration(seconds: 1));
+      if (!mounted) return;
 
       AppSnackBar.show(
         context: context,
         text: message,
         backgroundColor: Colors.red,
       );
-    } 
+    }
   }
 
   void openChangePasswordSheet() {

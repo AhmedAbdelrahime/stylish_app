@@ -44,9 +44,7 @@ class _SettingTextFieldState extends State<SettingTextField> {
           text: widget.labelText,
           size: 15,
           weight: FontWeight.w400,
-          color: isEnabled
-              ? AppColors.blackColor
-              : AppColors.grayColor,
+          color: isEnabled ? AppColors.blackColor : AppColors.grayColor,
         ),
         const Gap(10),
 
@@ -56,12 +54,9 @@ class _SettingTextFieldState extends State<SettingTextField> {
           obscureText: _obsecureText,
           enabled: isEnabled,
           readOnly: !isEnabled,
-          cursorColor:
-              isEnabled ? AppColors.blackColor : Colors.transparent,
+          cursorColor: isEnabled ? AppColors.blackColor : Colors.transparent,
           style: TextStyle(
-            color: isEnabled
-                ? AppColors.blackColor
-                : AppColors.grayColor,
+            color: isEnabled ? AppColors.blackColor : AppColors.grayColor,
             fontWeight: FontWeight.w500,
           ),
 
@@ -69,7 +64,7 @@ class _SettingTextFieldState extends State<SettingTextField> {
             filled: true,
             fillColor: isEnabled
                 ? AppColors.primaryColor
-                : AppColors.grayColor.withOpacity(0.15),
+                : AppColors.grayColor.withValues(alpha: 0.15),
 
             // 👁 Password icon
             suffixIcon: widget.isPassowed
@@ -87,7 +82,7 @@ class _SettingTextFieldState extends State<SettingTextField> {
                           : Icons.visibility_off_outlined,
                       color: isEnabled
                           ? Colors.grey
-                          : Colors.grey.withOpacity(0.5),
+                          : Colors.grey.withValues(alpha: 0.5),
                     ),
                   )
                 : null,
@@ -109,7 +104,7 @@ class _SettingTextFieldState extends State<SettingTextField> {
         width: 1.5,
         color: enabled
             ? AppColors.grayColor
-            : AppColors.grayColor.withOpacity(0.4),
+            : AppColors.grayColor.withValues(alpha: 0.4),
       ),
     );
   }

@@ -27,6 +27,7 @@ class _PaymentSectionState extends State<PaymentSection> {
     setState(() => isloading = true);
 
     final methods = await _paymentService.getPaymentMethods();
+    if (!mounted) return;
 
     setState(() {
       _methods = methods;
@@ -39,6 +40,7 @@ class _PaymentSectionState extends State<PaymentSection> {
       setState(() => isDelete = true);
 
       await _paymentService.deletePaymentMethod(paymentMethodId);
+      if (!mounted) return;
 
       // remove locally (faster UX)
       _methods.removeWhere((m) => m.id == paymentMethodId);
@@ -51,6 +53,7 @@ class _PaymentSectionState extends State<PaymentSection> {
         backgroundColor: Colors.green,
       );
     } catch (e) {
+      if (!mounted) return;
       setState(() => isDelete = false);
 
       AppSnackBar.show(
@@ -106,7 +109,7 @@ class _PaymentSectionState extends State<PaymentSection> {
           ),
         ),
         Gap(10),
-        AddCardButton(),
+        AddCardButton(onCardAdded: loadPaymentMethods),
 
         Gap(100),
       ],

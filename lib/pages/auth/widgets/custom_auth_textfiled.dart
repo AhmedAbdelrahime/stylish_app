@@ -36,25 +36,22 @@ class _CustomAuthTextfiledState extends State<CustomAuthTextfiled> {
       validator: widget.validator,
       keyboardType: widget.keyboardType,
       controller: widget.controller,
+      obscureText: _obsecureText,
       cursorColor: AppColors.grayColor,
       decoration: InputDecoration(
         suffixIcon: widget.isPassowed
-            ? GestureDetector(
-                onTap: () {
+            ? IconButton(
+                onPressed: () {
                   setState(() {
                     _obsecureText = !_obsecureText;
                   });
                 },
-
-                child: _obsecureText
-                    ? Icon(
-                        Icons.visibility_outlined,
-                        color: AppColors.hintColor,
-                      )
-                    : Icon(
-                        Icons.visibility_off_outlined,
-                        color: AppColors.hintColor,
-                      ),
+                icon: Icon(
+                  _obsecureText
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: AppColors.hintColor,
+                ),
               )
             : null,
         prefixIcon: Icon(widget.icone),
@@ -77,8 +74,7 @@ class _CustomAuthTextfiledState extends State<CustomAuthTextfiled> {
         hintText: widget.labelText,
         hintStyle: TextStyle(color: AppColors.hintColor, fontSize: 14),
         filled: true,
-        // ignore: deprecated_member_use
-        fillColor: AppColors.grayColor.withOpacity(.2),
+        fillColor: AppColors.grayColor.withValues(alpha: .2),
       ),
     );
   }

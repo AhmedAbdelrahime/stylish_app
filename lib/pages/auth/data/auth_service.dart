@@ -4,27 +4,33 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AuthService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  Future<void> signUp({required String email, required String password}) async {
+  Future<void> signUp({
+    required String fullName,
+    required String email,
+    required String password,
+  }) async {
     try {
       final response = await _supabase.auth.signUp(
         email: email,
         password: password,
+        data: {'full_name': fullName},
       );
 
       final user = response.user;
 
       if (kDebugMode) {
-        print('User created: $user');
+        debugPrint('User created: $user');
       }
 
       if (user != null) {
-        await _supabase
-            .from('profiles')
-            .upsert({'id': user.id, 'email': email})
-            .eq('id', user.id);
+        await _supabase.from('profiles').upsert({
+          'id': user.id,
+          'email': email,
+          'full_name': fullName,
+        });
 
         if (kDebugMode) {
-          print(user);
+          debugPrint(user.toString());
         }
       }
     } catch (error) {
@@ -39,14 +45,11 @@ class AuthService {
         password: password,
       );
 
-      final user = response.user;
-
       if (kDebugMode) {
-        print('User Login: $user');
+        debugPrint('User Login: ${response.user}');
       }
     } catch (error) {
       throw error.toString();
-      // rethrow;
     }
   }
 
@@ -54,36 +57,32 @@ class AuthService {
     try {
       await _supabase.auth.signOut();
       if (kDebugMode) {
-        print('User signed out');
+        debugPrint('User signed out');
       }
     } catch (error) {
       throw error.toString();
     }
-  } 
+  }
 
   Future<void> forgotPassword({required String email}) async {
     try {
-      // 🔍 1. Check email in profiles table
       final response = await _supabase
           .from('profiles')
           .select('id')
           .eq('email', email)
           .maybeSingle();
-      print(response);
 
       if (response == null) {
-        print(response);
         throw 'No account found with this email';
       }
 
-      // 📧 2. Send reset email
       await _supabase.auth.resetPasswordForEmail(
         email,
         redirectTo: 'io.supabase.hungry://reset-password',
       );
 
       if (kDebugMode) {
-        print('Reset password email sent');
+        debugPrint('Reset password email sent');
       }
     } catch (error) {
       throw error.toString();
@@ -95,23 +94,20 @@ class AuthService {
       await _supabase.auth.updateUser(UserAttributes(password: newPassword));
 
       if (kDebugMode) {
-        print('Password updated successfully');
+        debugPrint('Password updated successfully');
       }
     } catch (error) {
       throw error.toString();
     }
   }
-   Future<void> changePassword(String newPassword) async {
+
+  Future<void> changePassword(String newPassword) async {
     final user = _supabase.auth.currentUser;
 
     if (user == null) {
       throw 'User not logged in';
     }
 
-    await _supabase.auth.updateUser(
-      UserAttributes(
-        password: newPassword,
-      ),
-    );
+    await _supabase.auth.updateUser(UserAttributes(password: newPassword));
   }
 }

@@ -27,6 +27,7 @@ class _AppBarSectionState extends State<AppBarSection> {
       setState(() => isloading = false);
     } catch (e) {
       final readableMessage = SupabaseErrorMapper.map(e);
+      if (!mounted) return;
 
       AppSnackBar.show(
         context: context,
@@ -53,10 +54,12 @@ class _AppBarSectionState extends State<AppBarSection> {
 
   @override
   Widget build(BuildContext context) {
+    final canGoBack = Navigator.of(context).canPop();
+
     return ProductAppBar(
       text: 'Settings',
       padiing: 20,
-      showbackicon: false,
+      showbackicon: canGoBack,
       isSettingpage: true,
       logout: showLogoutDialog,
     );

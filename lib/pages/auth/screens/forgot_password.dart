@@ -36,17 +36,19 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       });
       try {
         await _authService.forgotPassword(email: emailControler.text);
+        if (!mounted) return;
 
         setState(() {
           isloading = false;
         });
-          AppSnackBar.show(
-    context: context,
-    text: 'Password reset email sent',
-    icon: Icons.email_outlined,
-    backgroundColor: Colors.green,
-  );
+        AppSnackBar.show(
+          context: context,
+          text: 'Password reset email sent',
+          icon: Icons.email_outlined,
+          backgroundColor: Colors.green,
+        );
       } catch (e) {
+        if (!mounted) return;
         final readableMessage = SupabaseErrorMapper.map(e);
 
         AppSnackBar.show(
@@ -125,12 +127,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     Gap(20),
 
                     isloading
-                          ? CupertinoActivityIndicator(
-                              color: AppColors.redColor,
-                              radius: 25,
-                            )
-                          :
-  CustomButton(ontap: forgotPassword, text: "Submit"),
+                        ? CupertinoActivityIndicator(
+                            color: AppColors.redColor,
+                            radius: 25,
+                          )
+                        : CustomButton(ontap: forgotPassword, text: "Submit"),
 
                     Gap(20),
                   ],

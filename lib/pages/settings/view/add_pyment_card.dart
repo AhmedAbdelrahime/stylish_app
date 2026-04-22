@@ -35,7 +35,10 @@ class AddPaymentCardState extends State<AddPaymentCard> {
   String cardBrand = '';
   // CardTypeType = CardType.otherBrand;
   final OutlineInputBorder border = OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.grey.withOpacity(0.7), width: 2.0),
+    borderSide: BorderSide(
+      color: Colors.grey.withValues(alpha: 0.7),
+      width: 2.0,
+    ),
   );
   // final SupabaseClient _supabase = Supabase.instance.client;
 
@@ -82,6 +85,7 @@ class AddPaymentCardState extends State<AddPaymentCard> {
 
       Navigator.pop(context);
     } catch (e) {
+      if (!mounted) return;
       AppSnackBar.show(
         context: context,
         text: 'Failed to add card.',
@@ -180,14 +184,6 @@ class AddPaymentCardState extends State<AddPaymentCard> {
         ),
       ),
     );
-  }
-
-  void _onValidate() {
-    if (formKey.currentState?.validate() ?? false) {
-      print('valid!');
-    } else {
-      print('invalid!');
-    }
   }
 
   void onCreditCardModelChange(CreditCardModel creditCardModel) {
