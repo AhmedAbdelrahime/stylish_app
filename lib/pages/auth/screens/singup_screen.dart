@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import 'dart:async';
 
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -14,7 +17,10 @@ import 'package:hungry/pages/auth/widgets/footer_text.dart';
 import 'package:hungry/pages/auth/widgets/other_login.dart';
 import 'package:hungry/pages/auth/widgets/sinagup_form.dart';
 import 'package:hungry/shared/custom_button.dart';
+<<<<<<< HEAD
 import 'package:supabase_flutter/supabase_flutter.dart';
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 
 class SingupScreen extends StatefulWidget {
   const SingupScreen({super.key});
@@ -30,6 +36,7 @@ class _SingupScreenState extends State<SingupScreen> {
   final TextEditingController _confirmControler = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isloading = false;
+<<<<<<< HEAD
   bool _isGoogleLoading = false;
   bool _isWaitingForGoogleAuth = false;
   final _authService = AuthService();
@@ -38,6 +45,12 @@ class _SingupScreenState extends State<SingupScreen> {
   @override
   void dispose() {
     _authSubscription.cancel();
+=======
+  final _authService = AuthService();
+
+  @override
+  void dispose() {
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
     _nameControler.dispose();
     _emailControler.dispose();
     _passControler.dispose();
@@ -84,6 +97,7 @@ class _SingupScreenState extends State<SingupScreen> {
     }
   }
 
+<<<<<<< HEAD
   Future<void> _signInWithGoogle() async {
     if (_isGoogleLoading) return;
 
@@ -132,6 +146,8 @@ class _SingupScreenState extends State<SingupScreen> {
     });
   }
 
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -162,10 +178,14 @@ class _SingupScreenState extends State<SingupScreen> {
                           )
                         : CustomButton(ontap: _signUp, text: "Create Account"),
 
+<<<<<<< HEAD
                     OtherLogin(
                       onGoogleTap: _isloading ? null : _signInWithGoogle,
                       isGoogleLoading: _isGoogleLoading,
                     ),
+=======
+                    OtherLogin(),
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
                     Gap(20),
                     FoooterText(
                       text1: 'I Already Have an Account',

@@ -25,13 +25,18 @@ class SuccessDialog extends StatelessWidget {
             Gap(10),
             Center(
               child: CustomText(
+<<<<<<< HEAD
                 text: 'Order placed successfully.',
+=======
+                text: 'Payment done successfully.',
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
                 color: Colors.black,
                 weight: FontWeight.w500,
                 size: 16,
               ),
             ),
             Gap(20),
+<<<<<<< HEAD
             Row(
               children: [
                 Expanded(
@@ -64,6 +69,13 @@ class SuccessDialog extends StatelessWidget {
                 ),
               ],
             ),
+=======
+            // CartBtn(
+            //   width: double.infinity,
+            //   ontap: () => Navigator.pop(context),
+            //   text: 'Go Back',
+            // ),
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
           ],
         ),
       ),

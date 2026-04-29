@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 import 'dart:async';
 
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -14,7 +17,10 @@ import 'package:hungry/pages/auth/widgets/login_form.dart';
 import 'package:hungry/pages/auth/widgets/other_login.dart';
 import 'package:hungry/shared/custom_button.dart';
 import 'package:hungry/shared/custom_text.dart';
+<<<<<<< HEAD
 import 'package:supabase_flutter/supabase_flutter.dart';
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passControler = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isloading = false;
+<<<<<<< HEAD
   bool _isGoogleLoading = false;
   bool _isWaitingForGoogleAuth = false;
   final _authService = AuthService();
@@ -36,6 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _authSubscription.cancel();
+=======
+  final _authService = AuthService();
+  @override
+  void dispose() {
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
     emailControler.dispose();
     passControler.dispose();
     super.dispose();
@@ -79,6 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+<<<<<<< HEAD
   Future<void> _signInWithGoogle() async {
     if (_isGoogleLoading) return;
 
@@ -106,10 +119,13 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
   @override
   void initState() {
     emailControler.text = 'ahmed@123.com';
     passControler.text = '123456789';
+<<<<<<< HEAD
     _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((
       data,
     ) {
@@ -126,6 +142,8 @@ class _LoginScreenState extends State<LoginScreen> {
         (route) => false,
       );
     });
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
     super.initState();
   }
 
@@ -159,10 +177,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           )
                         : CustomButton(ontap: _logIn, text: "Login"),
 
+<<<<<<< HEAD
                     OtherLogin(
                       onGoogleTap: _isloading ? null : _signInWithGoogle,
                       isGoogleLoading: _isGoogleLoading,
                     ),
+=======
+                    OtherLogin(),
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
                     Gap(20),
                     FoooterText(
                       text1: 'Create An Account',

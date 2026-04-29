@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+<<<<<<< HEAD
 import 'package:hungry/shared/custom_text.dart';
 
 class OtherLogin extends StatelessWidget {
@@ -21,6 +22,16 @@ class OtherLogin extends StatelessWidget {
       ),
     ];
 
+=======
+import 'package:hungry/pages/auth/models/loogin_icons.dart';
+import 'package:hungry/shared/custom_text.dart';
+
+class OtherLogin extends StatelessWidget {
+  const OtherLogin({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
     return Column(
       children: [
         Gap(50),
@@ -33,6 +44,7 @@ class OtherLogin extends StatelessWidget {
         Gap(20),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
+<<<<<<< HEAD
           children: List.generate(options.length, (index) {
             final option = options[index];
             final isEnabled = option.onTap != null;
@@ -66,11 +78,34 @@ class OtherLogin extends StatelessWidget {
               ),
             );
           }),
+=======
+          children: List.generate(
+            icons.length,
+            (index) => GestureDetector(
+              onTap: icons[index].ontap,
+
+              child: Container(
+                margin: EdgeInsets.all(5),
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: AppColors.redColor,
+                  shape: BoxShape.circle,
+                ),
+                child: CircleAvatar(
+                  backgroundColor: const Color.fromARGB(255, 255, 240, 240),
+                  radius: 20,
+                  child: Image.asset(icons[index].imge, width: 30),
+                ),
+              ),
+            ),
+          ),
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
         ),
       ],
     );
   }
 }
+<<<<<<< HEAD
 
 class _SocialLoginOption {
   const _SocialLoginOption({
@@ -83,3 +118,5 @@ class _SocialLoginOption {
   final VoidCallback? onTap;
   final bool isLoading;
 }
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8

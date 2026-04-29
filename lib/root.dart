@@ -29,10 +29,75 @@ class _RootState extends State<Root> {
   ];
 
   int currentpage = 0;
+<<<<<<< HEAD
 
   bool isloadinglogout = false;
 
  
+=======
+  // bool isGuest = false;
+  // AuthRepo authRepo = AuthRepo();
+
+  bool isloadinglogout = false;
+
+  // UserModel? userModel;
+  // Future<void> getProfileData() async {
+  //   try {
+  //     final user = await authRepo.getProfileData();
+  //     setState(() {
+  //       userModel = user;
+  //     });
+  //   } catch (e) {
+  //     String errorMsg = 'Error in profile';
+  //     ScaffoldMessenger.of(context).showSnackBar(customSnakBar(errorMsg));
+  //   }
+  // }
+
+  // Future<void> autologin() async {
+  //   try {
+  //     final user = await authRepo.autoLogin();
+  //     setState(() {
+  //       isGuest = authRepo.isGuest;
+  //     });
+  //     if (user != null) {
+  //       setState(() {
+  //         userModel = user;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     String errorMsg = 'Error in profile';
+  //     // ScaffoldMessenger.of(context).showSnackBar(customSnakBar(errorMsg));
+  //   }
+  // }
+
+  // Future<void> logout() async {
+  //   try {
+  //     setState(() => isloadinglogout = true);
+
+  //     await authRepo.logout();
+  //     if (!mounted) return;
+  //     setState(() => isloadinglogout = false);
+  //     await Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) {
+  //           return LoginView();
+  //         },
+  //       ),
+  //     );
+  //   } catch (e) {
+  //     if (!mounted) return;
+
+  //     setState(() => isloadinglogout = false);
+
+  //     String errMsg = 'Failed to logout';
+  //     if (e is ApiError) errMsg = e.message;
+
+  //     ScaffoldMessenger.of(context).showSnackBar(customSnakBar(errMsg));
+  //   }
+  // }
+
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
   @override
   void initState() {
     super.initState();

@@ -22,6 +22,7 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+<<<<<<< HEAD
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -35,6 +36,8 @@
 			</array>
 		</dict>
 	</array>
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

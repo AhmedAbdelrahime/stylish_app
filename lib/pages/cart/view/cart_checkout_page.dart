@@ -6,7 +6,10 @@ import 'package:hungry/pages/cart/data/cart_item_model.dart';
 import 'package:hungry/pages/cart/data/cart_service.dart';
 import 'package:hungry/pages/cart/data/order_service.dart';
 import 'package:hungry/pages/cart/widgets/success_dialog.dart';
+<<<<<<< HEAD
 import 'package:hungry/pages/orders/view/order_details_page.dart';
+=======
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 import 'package:hungry/pages/product/widgets/product_app_bar.dart';
 import 'package:hungry/pages/settings/data/payment_service.dart';
 import 'package:hungry/pages/settings/data/profile_service.dart';
@@ -181,11 +184,16 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
     });
 
     try {
+<<<<<<< HEAD
       final orderId = await _orderService.createCartOrder(items: widget.items);
+=======
+      await _orderService.createCartOrder(items: widget.items);
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
       await _cartService.clearCart();
 
       if (!mounted) return;
 
+<<<<<<< HEAD
       final shouldTrackOrder = await showDialog<bool>(
         context: context,
         builder: (_) => const SuccessDialog(),
@@ -201,6 +209,12 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
       } else {
         Navigator.pop(context);
       }
+=======
+      await showDialog(context: context, builder: (_) => const SuccessDialog());
+
+      if (!mounted) return;
+      Navigator.pop(context);
+>>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
     } catch (e) {
       if (!mounted) return;
 
