@@ -47,5 +47,4 @@ class ImageSection extends StatelessWidget {
   }
 }
 
-
-// 
+//

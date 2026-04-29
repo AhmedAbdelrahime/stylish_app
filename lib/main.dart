@@ -10,17 +10,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-<<<<<<< HEAD
     url: 'https://apijlhhescaneunlxcjp.supabase.co',
     anonKey: 'sb_publishable_h4ZcJoSQvSErw1N7_KHUcg_WreRR2Za',
   );
-//apijlhhescaneunlxcjp
-=======
-    url: 'https://psbvfcqtjiitnbuurlkd.supabase.co',
-    anonKey: 'sb_publishable_sMuiVlT9_I7aMkW5Mxm-IA_U4_j7BAe',
-  );
-
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
+  //apijlhhescaneunlxcjp
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   Supabase.instance.client.auth.onAuthStateChange.listen((data) {

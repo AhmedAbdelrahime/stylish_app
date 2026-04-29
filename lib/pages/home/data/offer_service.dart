@@ -7,8 +7,6 @@ class OfferService {
   Future<List<OfferesModel>> getOffers() async {
     final data = await _supabase.from('offers').select().order('created_at');
 
-    return (data as List)
-        .map((item) => OfferesModel.fromJson(item))
-        .toList();
+    return (data as List).map((item) => OfferesModel.fromJson(item)).toList();
   }
 }

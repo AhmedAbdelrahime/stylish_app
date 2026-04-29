@@ -10,26 +10,22 @@ class BuildPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 60, bottom: 40),
-                      child: SvgPicture.asset(onbordings.image),
-                    ),
-                    CustomText(
-                      text: onbordings.title,
-                      size: 24,
-                      weight: FontWeight.bold,
-                    ),
-                    SizedBox(height: 15),
-                    CustomText(
-                      text:  onbordings.description,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 60, bottom: 40),
+          child: SvgPicture.asset(onbordings.image),
+        ),
+        CustomText(text: onbordings.title, size: 24, weight: FontWeight.bold),
+        SizedBox(height: 15),
+        CustomText(
+          text: onbordings.description,
 
-                      size: 18,
-                      weight: FontWeight.w400,
-                      color: AppColors.grayColor,
-                    ),
-                  ],
-                );
+          size: 18,
+          weight: FontWeight.w400,
+          color: AppColors.grayColor,
+        ),
+      ],
+    );
   }
 }

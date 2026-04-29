@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
 import 'package:hungry/core/constants/app_colors.dart';
@@ -6,10 +6,7 @@ import 'package:hungry/pages/cart/data/coupon_service.dart';
 import 'package:hungry/pages/cart/data/order_service.dart';
 import 'package:hungry/pages/cart/widgets/success_dialog.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
-<<<<<<< HEAD
 import 'package:hungry/pages/orders/view/order_details_page.dart';
-=======
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 import 'package:hungry/pages/product/widgets/product_app_bar.dart';
 import 'package:hungry/pages/settings/data/payment_service.dart';
 import 'package:hungry/pages/settings/data/profile_service.dart';
@@ -175,11 +172,7 @@ class _ChekoutPageState extends State<ChekoutPage> {
     });
 
     try {
-<<<<<<< HEAD
       final orderId = await _orderService.createSingleItemOrder(
-=======
-      await _orderService.createSingleItemOrder(
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
         product: widget.product,
         quantity: widget.quantity,
         selectedSize: widget.selectedSize,
@@ -188,7 +181,6 @@ class _ChekoutPageState extends State<ChekoutPage> {
 
       if (!mounted) return;
 
-<<<<<<< HEAD
       final shouldTrackOrder = await showDialog<bool>(
         context: context,
         builder: (context) => const SuccessDialog(),
@@ -204,12 +196,6 @@ class _ChekoutPageState extends State<ChekoutPage> {
       } else {
         Navigator.pop(context);
       }
-=======
-      await showDialog(
-        context: context,
-        builder: (context) => const SuccessDialog(),
-      );
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
     } catch (e) {
       if (!mounted) return;
 

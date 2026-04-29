@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
 import 'package:hungry/core/constants/app_colors.dart';
@@ -6,10 +6,7 @@ import 'package:hungry/pages/auth/data/auth_service.dart';
 import 'package:hungry/pages/cart/view/cart_page.dart';
 import 'package:hungry/pages/home/logic/favorites/favorites_controller.dart';
 import 'package:hungry/pages/home/view/wishlist_page.dart';
-<<<<<<< HEAD
 import 'package:hungry/pages/orders/view/orders_page.dart';
-=======
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 import 'package:hungry/pages/settings/view/settings_page.dart';
 import 'package:hungry/pages/settings/widgets/logout_dialog.dart';
 
@@ -23,17 +20,13 @@ class HomeAppBar extends StatelessWidget {
   Future<void> _openQuickActions(BuildContext context) async {
     await showModalBottomSheet<void>(
       context: context,
-<<<<<<< HEAD
       isScrollControlled: true,
-=======
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
       builder: (sheetContext) {
         return SafeArea(
-<<<<<<< HEAD
           child: ConstrainedBox(
             constraints: BoxConstraints(
               maxHeight: MediaQuery.sizeOf(context).height * 0.86,
@@ -146,97 +139,6 @@ class HomeAppBar extends StatelessWidget {
                   ),
                 ],
               ),
-=======
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Quick Actions',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.blackColor,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Open the sections people usually need most.',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.hintColor,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 18),
-                _MenuTile(
-                  icon: Icons.favorite_border_rounded,
-                  title: 'Wishlist',
-                  subtitle: 'See your saved items',
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const WishlistPage(),
-                      ),
-                    );
-                  },
-                ),
-                _MenuTile(
-                  icon: Icons.shopping_cart_outlined,
-                  title: 'Cart',
-                  subtitle: 'Review your bag items',
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const CartPage()),
-                    );
-                  },
-                ),
-                _MenuTile(
-                  icon: Icons.settings_outlined,
-                  title: 'Settings',
-                  subtitle: 'Manage profile and address',
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SettingsPage(),
-                      ),
-                    );
-                  },
-                ),
-                _MenuTile(
-                  icon: Icons.logout_rounded,
-                  title: 'Logout',
-                  subtitle: 'Sign out of this account',
-                  isDestructive: true,
-                  onTap: () async {
-                    Navigator.pop(sheetContext);
-                    final shouldLogout = await showDialog<bool>(
-                      context: context,
-                      builder: (_) => const LogoutDialog(),
-                    );
-
-                    if (shouldLogout != true || !context.mounted) return;
-
-                    try {
-                      await AuthService().signOut();
-                    } catch (error) {
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(SupabaseErrorMapper.map(error))),
-                      );
-                    }
-                  },
-                ),
-              ],
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
             ),
           ),
         );

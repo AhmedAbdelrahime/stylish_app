@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
 import 'package:hungry/core/constants/app_colors.dart';
@@ -6,10 +6,7 @@ import 'package:hungry/pages/cart/data/cart_item_model.dart';
 import 'package:hungry/pages/cart/data/cart_service.dart';
 import 'package:hungry/pages/cart/data/order_service.dart';
 import 'package:hungry/pages/cart/widgets/success_dialog.dart';
-<<<<<<< HEAD
 import 'package:hungry/pages/orders/view/order_details_page.dart';
-=======
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 import 'package:hungry/pages/product/widgets/product_app_bar.dart';
 import 'package:hungry/pages/settings/data/payment_service.dart';
 import 'package:hungry/pages/settings/data/profile_service.dart';
@@ -184,16 +181,11 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
     });
 
     try {
-<<<<<<< HEAD
       final orderId = await _orderService.createCartOrder(items: widget.items);
-=======
-      await _orderService.createCartOrder(items: widget.items);
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
       await _cartService.clearCart();
 
       if (!mounted) return;
 
-<<<<<<< HEAD
       final shouldTrackOrder = await showDialog<bool>(
         context: context,
         builder: (_) => const SuccessDialog(),
@@ -209,12 +201,6 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
       } else {
         Navigator.pop(context);
       }
-=======
-      await showDialog(context: context, builder: (_) => const SuccessDialog());
-
-      if (!mounted) return;
-      Navigator.pop(context);
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
     } catch (e) {
       if (!mounted) return;
 
@@ -267,7 +253,7 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
                     ),
                     const Gap(4),
                     Text(
-                      '₹${_price(_total)}',
+                      'â‚¹${_price(_total)}',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
@@ -522,17 +508,17 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
                       const Gap(12),
                       _SummaryRow(
                         label: 'Subtotal',
-                        value: '₹${_price(_subtotal)}',
+                        value: 'â‚¹${_price(_subtotal)}',
                       ),
                       const Gap(10),
                       _SummaryRow(
                         label: 'Shipping',
-                        value: '₹${_price(_shippingFee)}',
+                        value: 'â‚¹${_price(_shippingFee)}',
                       ),
                       const Gap(10),
                       _SummaryRow(
                         label: 'Savings',
-                        value: '- ₹${_price(_discountAmount)}',
+                        value: '- â‚¹${_price(_discountAmount)}',
                         valueColor: Colors.green.shade700,
                       ),
                       const Gap(14),
@@ -540,7 +526,7 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
                       const Gap(14),
                       _SummaryRow(
                         label: 'Total',
-                        value: '₹${_price(_total)}',
+                        value: 'â‚¹${_price(_total)}',
                         isStrong: true,
                       ),
                     ],
@@ -832,7 +818,7 @@ class _CheckoutItemTile extends StatelessWidget {
         ),
         const Gap(10),
         Text(
-          '₹${_price(item.lineTotal)}',
+          'â‚¹${_price(item.lineTotal)}',
           style: const TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w800,

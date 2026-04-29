@@ -1,4 +1,4 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+﻿import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:hungry/pages/cart/data/cart_item_model.dart';
 import 'package:hungry/pages/cart/data/coupon_service.dart';
@@ -32,7 +32,6 @@ class OrderService {
 
     final profile = await _profileService.getProfile();
     final shippingAddress = _composeShippingAddress(profile);
-<<<<<<< HEAD
     final orderId = await _createOrderWithItems(
       orderPayload: {
         'status': 'pending',
@@ -60,41 +59,6 @@ class OrderService {
         },
       ],
     );
-=======
-
-    final orderData = await _supabase
-        .from('orders')
-        .insert({
-          'user_id': user.id,
-          'status': 'pending',
-          'payment_status': 'pending',
-          'delivery_status': 'pending',
-          'subtotal': subtotal,
-          'shipping_fee': shippingFee,
-          'discount_amount': discountAmount,
-          'total_amount': totalAmount,
-          'currency': 'INR',
-          'shipping_address': shippingAddress,
-          'notes': coupon == null ? null : 'Coupon: ${coupon.code}',
-        })
-        .select('id')
-        .single();
-
-    final orderId = orderData['id'] as String;
-
-    await _supabase.from('order_items').insert({
-      'order_id': orderId,
-      'product_id': product.id,
-      'product_name': product.name,
-      'product_title': product.title,
-      'product_image_url': product.primaryImage.isEmpty
-          ? null
-          : product.primaryImage,
-      'unit_price': unitPrice,
-      'quantity': quantity,
-      'selected_size': selectedSize,
-    });
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 
     if (coupon != null) {
       await _supabase.rpc(
@@ -129,35 +93,9 @@ class OrderService {
 
     final profile = await _profileService.getProfile();
     final shippingAddress = _composeShippingAddress(profile);
-<<<<<<< HEAD
     final orderItems = items
         .map(
           (item) => {
-=======
-
-    final orderData = await _supabase
-        .from('orders')
-        .insert({
-          'user_id': user.id,
-          'status': 'pending',
-          'payment_status': 'pending',
-          'delivery_status': 'pending',
-          'subtotal': subtotal,
-          'shipping_fee': shippingFee,
-          'discount_amount': discountAmount,
-          'total_amount': totalAmount,
-          'currency': 'INR',
-          'shipping_address': shippingAddress,
-        })
-        .select('id')
-        .single();
-
-    final orderId = orderData['id'] as String;
-    final orderItems = items
-        .map(
-          (item) => {
-            'order_id': orderId,
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
             'product_id': item.productId,
             'product_name': item.name,
             'product_title': item.productTitle,
@@ -169,7 +107,6 @@ class OrderService {
         )
         .toList();
 
-<<<<<<< HEAD
     return _createOrderWithItems(
       orderPayload: {
         'status': 'pending',
@@ -239,8 +176,6 @@ class OrderService {
         .map((item) => {...item, 'order_id': orderId})
         .toList(growable: false);
 
-=======
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
     await _supabase.from('order_items').insert(orderItems);
 
     return orderId;

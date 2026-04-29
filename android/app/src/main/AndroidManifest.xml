@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+﻿<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
         android:label="hungry"
         android:name="${applicationName}"
@@ -12,12 +12,8 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-             <!-- 🔹 Deep Link -->
-<<<<<<< HEAD
+             <!-- ðŸ”¹ Deep Link -->
             <intent-filter>
-=======
-            <intent-filter android:autoVerify="true">
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
               <action android:name="android.intent.action.VIEW" />
 
              <category android:name="android.intent.category.DEFAULT" />
@@ -27,7 +23,6 @@
             android:scheme="io.supabase.hungry"
             android:host="reset-password" />
                  </intent-filter>
-<<<<<<< HEAD
             <intent-filter>
               <action android:name="android.intent.action.VIEW" />
 
@@ -38,8 +33,6 @@
                   android:scheme="io.supabase.hungry"
                   android:host="login-callback" />
             </intent-filter>
-=======
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
             <!-- Specifies an Android theme to apply to this Activity as soon as
                  the Android process has started. This theme is visible to the user
                  while the Flutter UI initializes. After that, this theme continues

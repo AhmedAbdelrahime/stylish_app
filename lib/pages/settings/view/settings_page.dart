@@ -1,10 +1,7 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/pages/auth/widgets/app_snackbar.dart';
-<<<<<<< HEAD
 import 'package:hungry/pages/orders/view/orders_page.dart';
-=======
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
 import 'package:hungry/pages/settings/data/profile_service.dart';
 import 'package:hungry/pages/settings/data/user_model.dart';
 import 'package:hungry/pages/settings/widgets/app_bar_section.dart';
@@ -138,11 +135,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             stateController: stateController,
                             countryController: countryController,
                           ),
-<<<<<<< HEAD
                           const SizedBox(height: 16),
                           _OrdersShortcut(),
-=======
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
                           PaymentSection(),
                         ],
                       ),
@@ -161,7 +155,6 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 }
-<<<<<<< HEAD
 
 class _OrdersShortcut extends StatelessWidget {
   const _OrdersShortcut();
@@ -232,5 +225,3 @@ class _OrdersShortcut extends StatelessWidget {
     );
   }
 }
-=======
->>>>>>> 71e363e9e57e6f331681c6680a26430d8356d3c8
