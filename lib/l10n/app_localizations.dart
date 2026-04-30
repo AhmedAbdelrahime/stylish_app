@@ -357,6 +357,9 @@ const Map<String, Map<String, String>> _localizedValues = {
     'Sign in to checkout': 'سجل الدخول لإتمام الطلب',
     'You can build your cart as a guest. Sign in now to save delivery details and place the order.':
         'يمكنك تجهيز السلة كضيف. سجل الدخول الآن لحفظ بيانات التوصيل وتنفيذ الطلب.',
+    'Sign in to use coupons': 'سجل الدخول لاستخدام الكوبونات',
+    'Coupons are saved to your order, so sign in before applying a discount.':
+        'يتم حفظ الكوبونات مع طلبك، لذلك سجل الدخول قبل تطبيق الخصم.',
     'Sign in to buy this item': 'سجل الدخول لشراء هذا المنتج',
     'You can browse and add items as a guest. Sign in now to save delivery details and place the order.':
         'يمكنك التصفح وإضافة المنتجات كضيف. سجل الدخول الآن لحفظ بيانات التوصيل وتنفيذ الطلب.',

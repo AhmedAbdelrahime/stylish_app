@@ -1,5 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:hungry/core/config/store_config.dart';
+
 class AppliedCoupon {
   const AppliedCoupon({
     required this.id,
@@ -77,7 +79,7 @@ class CouponService {
     final minOrderAmount = (data['min_order_amount'] as num?)?.toDouble() ?? 0;
     if (subtotal < minOrderAmount) {
       throw CouponException('Coupon requires a minimum order of {amount}', {
-        'amount': '\u20B9${_formatAmount(minOrderAmount)}',
+        'amount': AppPrice.format(minOrderAmount),
       });
     }
 
@@ -109,13 +111,5 @@ class CouponService {
   static DateTime? _parseDateTime(dynamic value) {
     if (value == null) return null;
     return DateTime.tryParse(value.toString())?.toUtc();
-  }
-
-  static String _formatAmount(double value) {
-    if (value == value.roundToDouble()) {
-      return value.toStringAsFixed(0);
-    }
-
-    return value.toStringAsFixed(2);
   }
 }

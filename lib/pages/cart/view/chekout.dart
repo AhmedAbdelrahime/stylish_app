@@ -216,6 +216,14 @@ class _ChekoutPageState extends State<ChekoutPage> {
   Future<void> _applyCoupon() async {
     if (_isApplyingCoupon) return;
 
+    final authenticated = await AuthNavigation.requireAuth(
+      context,
+      title: 'Sign in to use coupons',
+      message:
+          'Coupons are saved to your order, so sign in before applying a discount.',
+    );
+    if (!mounted || !authenticated) return;
+
     setState(() {
       _isApplyingCoupon = true;
       _couponMessage = null;
