@@ -5,12 +5,13 @@ import 'package:hungry/l10n/app_localizations.dart';
 class CustomText extends StatelessWidget {
   const CustomText({
     super.key,
-    this.decoration,
     required this.text,
     required this.size,
     required this.weight,
     this.color = AppColors.blackColor,
+    this.decoration,
   });
+
   final String text;
   final double size;
   final FontWeight weight;
@@ -19,25 +20,18 @@ class CustomText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizedText = context.tr(text);
-
     return Text(
-      localizedText,
-
+      context.tr(text),
+      textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: size,
         fontWeight: weight,
         color: color,
+        decoration: decoration,
         decorationColor: AppColors.grayColor,
         decorationThickness: 1.2,
-
-        decoration: decoration, // 👈 strike-through
-        // overflow: TextOverflow.ellipsis,
         letterSpacing: 0,
-        // fontFamily: GoogleFonts.montserrat().fontFamily,
       ),
-
-      textAlign: TextAlign.center,
     );
   }
 }

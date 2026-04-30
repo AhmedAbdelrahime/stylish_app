@@ -335,6 +335,36 @@ const Map<String, Map<String, String>> _localizedValues = {
     'Unable to connect to server. \nPlease try again later.':
         'تعذر الاتصال بالخادم.\nيرجى المحاولة لاحقا.',
     'User not logged in': 'المستخدم غير مسجل الدخول',
+    'Sign in to continue': 'سجل الدخول للمتابعة',
+    'You can browse and add items as a guest. Sign in when you are ready to manage your account or place an order.':
+        'يمكنك التصفح وإضافة المنتجات كضيف. سجل الدخول عند إدارة الحساب أو تنفيذ الطلب.',
+    'Continue browsing': 'متابعة التصفح',
+    'Sign in to open Account': 'سجل الدخول لفتح الحساب',
+    'Your account keeps your address, orders, and delivery details secure.':
+        'يحفظ حسابك العنوان والطلبات وتفاصيل التوصيل بأمان.',
+    'Sign in to view your wishlist': 'سجل الدخول لعرض المفضلة',
+    'Save products to your wishlist and find them again from any device.':
+        'احفظ المنتجات في المفضلة واعثر عليها مرة أخرى من أي جهاز.',
+    'Sign in to view your orders': 'سجل الدخول لعرض طلباتك',
+    'Orders are connected to your account so delivery status and payment details stay private.':
+        'ترتبط الطلبات بحسابك حتى تبقى حالة التوصيل وتفاصيل الدفع خاصة.',
+    'Sign in to save favorites': 'سجل الدخول لحفظ المفضلة',
+    'Create an account or sign in to keep your wishlist saved.':
+        'أنشئ حسابا أو سجل الدخول حتى تبقى المفضلة محفوظة.',
+    'Sign in to manage delivery': 'سجل الدخول لإدارة التوصيل',
+    'Your delivery address is saved securely in your account and used only for checkout.':
+        'يتم حفظ عنوان التوصيل بأمان في حسابك واستخدامه عند إتمام الطلب فقط.',
+    'Sign in to checkout': 'سجل الدخول لإتمام الطلب',
+    'You can build your cart as a guest. Sign in now to save delivery details and place the order.':
+        'يمكنك تجهيز السلة كضيف. سجل الدخول الآن لحفظ بيانات التوصيل وتنفيذ الطلب.',
+    'Sign in to buy this item': 'سجل الدخول لشراء هذا المنتج',
+    'You can browse and add items as a guest. Sign in now to save delivery details and place the order.':
+        'يمكنك التصفح وإضافة المنتجات كضيف. سجل الدخول الآن لحفظ بيانات التوصيل وتنفيذ الطلب.',
+    'You can prepare your order as a guest. Sign in now to save delivery details and place the order.':
+        'يمكنك تجهيز الطلب كضيف. سجل الدخول الآن لحفظ بيانات التوصيل وتنفيذ الطلب.',
+    'Sign in to place order': 'سجل الدخول لتنفيذ الطلب',
+    'Create an account or sign in so we can save your order and delivery details.':
+        'أنشئ حسابا أو سجل الدخول حتى نتمكن من حفظ طلبك وتفاصيل التوصيل.',
     'Something went wrong. Please try again.':
         'حدث خطأ ما. يرجى المحاولة مرة أخرى.',
     'Contact Us': 'تواصل معنا',
@@ -418,6 +448,7 @@ const Map<String, Map<String, String>> _localizedValues = {
     'Confirmed': 'تم التأكيد',
     'Cancelled': 'ملغي',
     'Qty {count}': 'الكمية {count}',
+    'Qty': 'الكمية',
     'Size {size}': 'المقاس {size}',
     'Size: {size}': 'المقاس: {size}',
     'Size {size} UK': 'المقاس {size} UK',

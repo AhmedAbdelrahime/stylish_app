@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
+import 'package:hungry/core/auth/auth_navigation.dart';
 import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/l10n/app_localizations.dart';
@@ -143,6 +144,14 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
   }
 
   Future<void> _openAddressSettings() async {
+    final authenticated = await AuthNavigation.requireAuth(
+      context,
+      title: 'Sign in to manage delivery',
+      message:
+          'Your delivery address is saved securely in your account and used only for checkout.',
+    );
+    if (!mounted || !authenticated) return;
+
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -261,6 +270,19 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
   Future<void> _submitOrder() async {
     if (_isSubmitting || _isWhatsAppSubmitting) return;
 
+    final authenticated = await AuthNavigation.requireAuth(
+      context,
+      title: 'Sign in to place order',
+      message:
+          'Create an account or sign in so we can save your order and delivery details.',
+    );
+    if (!mounted || !authenticated) return;
+
+    if (_profile == null) {
+      await _loadCheckoutDetails();
+      if (!mounted) return;
+    }
+
     if (widget.items.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(context.tr('Your cart is empty.'))),
@@ -328,6 +350,19 @@ class _CartCheckoutPageState extends State<CartCheckoutPage> {
 
   Future<void> _submitWhatsAppOrder() async {
     if (_isSubmitting || _isWhatsAppSubmitting) return;
+
+    final authenticated = await AuthNavigation.requireAuth(
+      context,
+      title: 'Sign in to place order',
+      message:
+          'Create an account or sign in so we can save your order and delivery details.',
+    );
+    if (!mounted || !authenticated) return;
+
+    if (_profile == null) {
+      await _loadCheckoutDetails();
+      if (!mounted) return;
+    }
 
     if (widget.items.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(

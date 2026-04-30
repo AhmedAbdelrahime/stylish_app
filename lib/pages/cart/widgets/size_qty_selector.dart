@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/shared/custom_text.dart';
 
 class SizeQtySelector<T> extends StatelessWidget {
@@ -27,7 +28,15 @@ class SizeQtySelector<T> extends StatelessWidget {
       ),
       child: Row(
         children: [
-          CustomText(text: '$text:', size: 14, weight: FontWeight.w400),
+          Text(
+            '${context.tr(text)}:',
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: AppColors.blackColor,
+              letterSpacing: 0,
+            ),
+          ),
           DropdownButton<T>(
             dropdownColor: Colors.white,
             icon: const Icon(

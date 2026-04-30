@@ -49,9 +49,6 @@ class StoreAssets {
   static const deleteCardIcon = 'assets/svgs/deleteCard.svg';
   static const sortIcon = 'assets/svgs/sort.svg';
   static const filterIcon = 'assets/svgs/filter.svg';
-  static const onboardingTrend = 'assets/svgs/onbording1.svg';
-  static const onboardingCheckout = 'assets/svgs/onbording2.svg';
-  static const onboardingDelivery = 'assets/svgs/onbording3.svg';
 }
 
 class StoreContact {

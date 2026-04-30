@@ -38,6 +38,7 @@ class CartService {
       return items;
     }
 
+    await _migrateGuestCartToUserLocalIfNeeded();
     final storedEntries = await _readLocalEntries();
     final resolvedItems = await _resolveEntries(storedEntries);
 
@@ -135,18 +136,20 @@ class CartService {
     if (await _useBackendCart()) {
       final user = _supabase.auth.currentUser;
       if (user == null) {
-        await _clearLocalCart();
+        await _clearLocalCart(storageKey: _guestStorageKey);
         itemCountNotifier.value = 0;
         return;
       }
 
       await _supabase.from('cart_items').delete().eq('user_id', user.id);
       await _clearLocalCart();
+      await _clearLocalCart(storageKey: _guestStorageKey);
       itemCountNotifier.value = 0;
       return;
     }
 
     await _clearLocalCart();
+    await _clearLocalCart(storageKey: _guestStorageKey);
     itemCountNotifier.value = 0;
   }
 
@@ -336,9 +339,9 @@ class CartService {
     await _writeLocalEntries(entries, prefs: prefs);
   }
 
-  Future<void> _clearLocalCart() async {
+  Future<void> _clearLocalCart({String? storageKey}) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_storageKey);
+    await prefs.remove(storageKey ?? _storageKey);
   }
 
   Future<(List<_StoredCartEntry>, List<CartItemModel>)> _resolveEntries(
@@ -432,7 +435,16 @@ class CartService {
 
   Future<void> _migrateLocalCartToBackendIfNeeded() async {
     return _withSelectedSizeBackendCompatibility(() async {
-      final localEntries = await _readLocalEntries();
+      final prefs = await SharedPreferences.getInstance();
+      final userLocalEntries = await _readLocalEntries(prefs: prefs);
+      final guestEntries = await _readLocalEntries(
+        prefs: prefs,
+        storageKey: _guestStorageKey,
+      );
+      final localEntries = _mergeLocalEntries([
+        ...guestEntries,
+        ...userLocalEntries,
+      ]);
       if (localEntries.isEmpty) {
         return;
       }
@@ -455,13 +467,37 @@ class CartService {
             'selected_size': _selectedSizeForBackend(entry.selectedSize),
             'quantity': entry.quantity,
           });
-        } else if (entry.quantity > existingEntry.quantity) {
-          await _updateBackendRowQuantity(existingEntry.rowId!, entry.quantity);
+        } else {
+          await _updateBackendRowQuantity(
+            existingEntry.rowId!,
+            existingEntry.quantity + entry.quantity,
+          );
         }
       }
 
       await _clearLocalCart();
+      await _clearLocalCart(storageKey: _guestStorageKey);
     });
+  }
+
+  Future<void> _migrateGuestCartToUserLocalIfNeeded() async {
+    if (_supabase.auth.currentUser == null) {
+      return;
+    }
+
+    final prefs = await SharedPreferences.getInstance();
+    final guestEntries = await _readLocalEntries(
+      prefs: prefs,
+      storageKey: _guestStorageKey,
+    );
+    if (guestEntries.isEmpty) {
+      return;
+    }
+
+    final userEntries = await _readLocalEntries(prefs: prefs);
+    final mergedEntries = _mergeLocalEntries([...guestEntries, ...userEntries]);
+    await _writeLocalEntries(mergedEntries, prefs: prefs);
+    await prefs.remove(_guestStorageKey);
   }
 
   Future<List<_StoredCartEntry>> _readBackendEntries() async {
@@ -594,9 +630,10 @@ class CartService {
 
   Future<List<_StoredCartEntry>> _readLocalEntries({
     SharedPreferences? prefs,
+    String? storageKey,
   }) async {
     final storage = prefs ?? await SharedPreferences.getInstance();
-    final rawJson = storage.getString(_storageKey);
+    final rawJson = storage.getString(storageKey ?? _storageKey);
     if (rawJson == null || rawJson.trim().isEmpty) {
       return <_StoredCartEntry>[];
     }
@@ -619,10 +656,32 @@ class CartService {
   Future<void> _writeLocalEntries(
     List<_StoredCartEntry> entries, {
     SharedPreferences? prefs,
+    String? storageKey,
   }) async {
     final storage = prefs ?? await SharedPreferences.getInstance();
     final jsonList = entries.map((entry) => entry.toJson()).toList();
-    await storage.setString(_storageKey, jsonEncode(jsonList));
+    await storage.setString(storageKey ?? _storageKey, jsonEncode(jsonList));
+  }
+
+  List<_StoredCartEntry> _mergeLocalEntries(List<_StoredCartEntry> entries) {
+    final mergedByKey = <String, _StoredCartEntry>{};
+
+    for (final entry in entries) {
+      final key = '${entry.productId}::${entry.selectedSize ?? 'default'}';
+      final existing = mergedByKey[key];
+
+      if (existing == null) {
+        mergedByKey[key] = entry;
+        continue;
+      }
+
+      mergedByKey[key] = existing.copyWith(
+        quantity: existing.quantity + entry.quantity,
+        rowId: existing.rowId,
+      );
+    }
+
+    return mergedByKey.values.toList(growable: true);
   }
 
   Future<T> _withSelectedSizeBackendCompatibility<T>(
@@ -668,6 +727,8 @@ class CartService {
     final userId = _supabase.auth.currentUser?.id ?? 'guest';
     return '$_cartStoragePrefix::$userId';
   }
+
+  String get _guestStorageKey => '$_cartStoragePrefix::guest';
 }
 
 class _StoredCartEntry {

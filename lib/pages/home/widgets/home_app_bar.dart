@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
+import 'package:hungry/core/auth/auth_navigation.dart';
 import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/l10n/app_localizations.dart';
@@ -22,6 +23,8 @@ class HomeAppBar extends StatelessWidget {
   static final FavoritesController _favorites = FavoritesController.instance;
 
   Future<void> _openQuickActions(BuildContext context) async {
+    final signedIn = AuthNavigation.isSignedIn;
+
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -71,8 +74,15 @@ class HomeAppBar extends StatelessWidget {
                     icon: Icons.favorite_border_rounded,
                     title: 'Wishlist',
                     subtitle: 'See your saved items',
-                    onTap: () {
+                    onTap: () async {
                       Navigator.pop(sheetContext);
+                      final authenticated = await AuthNavigation.requireAuth(
+                        context,
+                        title: 'Sign in to view your wishlist',
+                        message:
+                            'Save products to your wishlist and find them again from any device.',
+                      );
+                      if (!context.mounted || !authenticated) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -99,8 +109,15 @@ class HomeAppBar extends StatelessWidget {
                     icon: Icons.receipt_long_outlined,
                     title: 'My Orders',
                     subtitle: 'Track status and delivery',
-                    onTap: () {
+                    onTap: () async {
                       Navigator.pop(sheetContext);
+                      final authenticated = await AuthNavigation.requireAuth(
+                        context,
+                        title: 'Sign in to view your orders',
+                        message:
+                            'Orders are connected to your account so delivery status and payment details stay private.',
+                      );
+                      if (!context.mounted || !authenticated) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -113,8 +130,15 @@ class HomeAppBar extends StatelessWidget {
                     icon: Icons.person_outline_rounded,
                     title: 'Account',
                     subtitle: 'Manage profile, address, and payment',
-                    onTap: () {
+                    onTap: () async {
                       Navigator.pop(sheetContext);
+                      final authenticated = await AuthNavigation.requireAuth(
+                        context,
+                        title: 'Sign in to open Account',
+                        message:
+                            'Your account keeps your address, orders, and delivery details secure.',
+                      );
+                      if (!context.mounted || !authenticated) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -124,34 +148,35 @@ class HomeAppBar extends StatelessWidget {
                       );
                     },
                   ),
-                  _MenuTile(
-                    icon: Icons.logout_rounded,
-                    title: 'Logout',
-                    subtitle: 'Sign out of this account',
-                    isDestructive: true,
-                    onTap: () async {
-                      Navigator.pop(sheetContext);
-                      final shouldLogout = await showDialog<bool>(
-                        context: context,
-                        builder: (_) => const LogoutDialog(),
-                      );
-
-                      if (shouldLogout != true || !context.mounted) return;
-
-                      try {
-                        await AuthService().signOut();
-                      } catch (error) {
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              context.tr(SupabaseErrorMapper.map(error)),
-                            ),
-                          ),
+                  if (signedIn)
+                    _MenuTile(
+                      icon: Icons.logout_rounded,
+                      title: 'Logout',
+                      subtitle: 'Sign out of this account',
+                      isDestructive: true,
+                      onTap: () async {
+                        Navigator.pop(sheetContext);
+                        final shouldLogout = await showDialog<bool>(
+                          context: context,
+                          builder: (_) => const LogoutDialog(),
                         );
-                      }
-                    },
-                  ),
+
+                        if (shouldLogout != true || !context.mounted) return;
+
+                        try {
+                          await AuthService().signOut();
+                        } catch (error) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                context.tr(SupabaseErrorMapper.map(error)),
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                 ],
               ),
             ),
@@ -194,7 +219,14 @@ class HomeAppBar extends StatelessWidget {
                 animation: _favorites,
                 builder: (context, _) {
                   return _ActionBox(
-                    onTap: () {
+                    onTap: () async {
+                      final authenticated = await AuthNavigation.requireAuth(
+                        context,
+                        title: 'Sign in to view your wishlist',
+                        message:
+                            'Save products to your wishlist and find them again from any device.',
+                      );
+                      if (!context.mounted || !authenticated) return;
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -246,7 +278,14 @@ class HomeAppBar extends StatelessWidget {
               ),
               const SizedBox(width: 10),
               _ActionBox(
-                onTap: () {
+                onTap: () async {
+                  final authenticated = await AuthNavigation.requireAuth(
+                    context,
+                    title: 'Sign in to open Account',
+                    message:
+                        'Your account keeps your address, orders, and delivery details secure.',
+                  );
+                  if (!context.mounted || !authenticated) return;
                   Navigator.push(
                     context,
                     MaterialPageRoute(

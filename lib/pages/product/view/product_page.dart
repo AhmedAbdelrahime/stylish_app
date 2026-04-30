@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/auth/auth_navigation.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/cart/data/cart_service.dart';
@@ -119,7 +120,15 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  void _openCheckoutFlow() {
+  Future<void> _openCheckoutFlow() async {
+    final authenticated = await AuthNavigation.requireAuth(
+      context,
+      title: 'Sign in to buy this item',
+      message:
+          'You can browse and add items as a guest. Sign in now to save delivery details and place the order.',
+    );
+    if (!mounted || !authenticated) return;
+
     Navigator.push(
       context,
       MaterialPageRoute(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/auth/auth_navigation.dart';
 import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/l10n/app_localizations.dart';
@@ -108,6 +109,28 @@ class _ShoppingPageState extends State<ShoppingPage> {
     return context.tr(error.toString().replaceFirst('Exception: ', ''));
   }
 
+  Future<void> _openCheckout() async {
+    final authenticated = await AuthNavigation.requireAuth(
+      context,
+      title: 'Sign in to checkout',
+      message:
+          'You can prepare your order as a guest. Sign in now to save delivery details and place the order.',
+    );
+    if (!mounted || !authenticated) return;
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChekoutPage(
+          product: widget.product,
+          selectedSize: _selectedSize,
+          quantity: _selectedQty,
+          appliedCoupon: _appliedCoupon,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,19 +178,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
       bottomSheet: CustomBtnSheet(
         total: _total,
         discountAmount: _discountAmount,
-        onProceed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ChekoutPage(
-                product: widget.product,
-                selectedSize: _selectedSize,
-                quantity: _selectedQty,
-                appliedCoupon: _appliedCoupon,
-              ),
-            ),
-          );
-        },
+        onProceed: _openCheckout,
       ),
     );
   }

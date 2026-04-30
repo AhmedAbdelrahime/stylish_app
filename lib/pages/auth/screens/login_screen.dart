@@ -5,19 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
 import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/pages/auth/data/auth_gate.dart';
 import 'package:hungry/pages/auth/data/auth_service.dart';
 import 'package:hungry/pages/auth/screens/singup_screen.dart';
 import 'package:hungry/pages/auth/widgets/app_snackbar.dart';
 import 'package:hungry/pages/auth/widgets/footer_text.dart';
 import 'package:hungry/pages/auth/widgets/login_form.dart';
 import 'package:hungry/pages/auth/widgets/other_login.dart';
+import 'package:hungry/root.dart';
 import 'package:hungry/shared/custom_button.dart';
 import 'package:hungry/shared/custom_text.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.returnToPrevious = false});
+
+  final bool returnToPrevious;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -61,10 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
         icon: Icons.check_circle_outline,
         backgroundColor: Colors.green,
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => AuthGate()),
-      );
+      _finishAuthentication();
     } catch (e) {
       final readableMessage = SupabaseErrorMapper.map(e);
 
@@ -119,12 +118,21 @@ class _LoginScreenState extends State<LoginScreen> {
       }
 
       _isWaitingForGoogleAuth = false;
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const AuthGate()),
-        (route) => false,
-      );
+      _finishAuthentication();
     });
+  }
+
+  void _finishAuthentication() {
+    if (widget.returnToPrevious && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop(true);
+      return;
+    }
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const Root()),
+      (route) => false,
+    );
   }
 
   @override
@@ -167,7 +175,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       text2: 'Sign Up',
                       onTap: () => Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => SingupScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => SingupScreen(
+                            returnToPrevious: widget.returnToPrevious,
+                          ),
+                        ),
                       ),
                     ),
                   ],

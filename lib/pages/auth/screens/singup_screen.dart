@@ -1,11 +1,10 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
 import 'package:hungry/core/constants/app_colors.dart';
-import 'package:hungry/pages/auth/data/auth_gate.dart';
 import 'package:hungry/pages/auth/data/auth_service.dart';
 import 'package:hungry/pages/auth/screens/login_screen.dart';
 import 'package:hungry/pages/auth/widgets/app_snackbar.dart';
@@ -13,11 +12,14 @@ import 'package:hungry/pages/auth/widgets/auth_header.dart';
 import 'package:hungry/pages/auth/widgets/footer_text.dart';
 import 'package:hungry/pages/auth/widgets/other_login.dart';
 import 'package:hungry/pages/auth/widgets/sinagup_form.dart';
+import 'package:hungry/root.dart';
 import 'package:hungry/shared/custom_button.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SingupScreen extends StatefulWidget {
-  const SingupScreen({super.key});
+  const SingupScreen({super.key, this.returnToPrevious = false});
+
+  final bool returnToPrevious;
 
   @override
   State<SingupScreen> createState() => _SingupScreenState();
@@ -66,10 +68,7 @@ class _SingupScreenState extends State<SingupScreen> {
         icon: Icons.check_circle_outline,
         backgroundColor: Colors.green,
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => AuthGate()),
-      );
+      _finishAuthentication();
     } catch (e) {
       final readableMessage = SupabaseErrorMapper.map(e);
 
@@ -124,12 +123,21 @@ class _SingupScreenState extends State<SingupScreen> {
       }
 
       _isWaitingForGoogleAuth = false;
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const AuthGate()),
-        (route) => false,
-      );
+      _finishAuthentication();
     });
+  }
+
+  void _finishAuthentication() {
+    if (widget.returnToPrevious && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop(true);
+      return;
+    }
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const Root()),
+      (route) => false,
+    );
   }
 
   @override
@@ -172,7 +180,11 @@ class _SingupScreenState extends State<SingupScreen> {
                       text2: 'Login',
                       onTap: () => Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                        MaterialPageRoute(
+                          builder: (context) => LoginScreen(
+                            returnToPrevious: widget.returnToPrevious,
+                          ),
+                        ),
                       ),
                     ),
                   ],

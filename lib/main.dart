@@ -5,7 +5,7 @@ import 'package:hungry/core/theme/app_theme.dart';
 import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/l10n/locale_controller.dart';
 import 'package:hungry/pages/auth/screens/rest_password.dart';
-import 'package:hungry/pages/spalsh_screen.dart';
+import 'package:hungry/pages/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
           ],
           theme: AppTheme.light,
           debugShowCheckedModeBanner: false,
-          home: const SpalshScreen(),
+          home: const SplashScreen(),
         );
       },
     );

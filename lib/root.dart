@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:hungry/core/auth/auth_navigation.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/cart/data/cart_service.dart';
@@ -42,6 +43,11 @@ class _RootState extends State<Root> {
     ) {
       if (data.session == null) {
         CartService.itemCountNotifier.value = 0;
+        if (currentpage == 3 && mounted) {
+          setState(() {
+            currentpage = 0;
+          });
+        }
         return;
       }
 
@@ -95,7 +101,18 @@ class _RootState extends State<Root> {
             tabBackgroundColor: AppColors.redColor,
             color: AppColors.hintColor,
             selectedIndex: currentpage,
-            onTabChange: (value) {
+            onTabChange: (value) async {
+              if (value == 3 && !AuthNavigation.isSignedIn) {
+                final authenticated = await AuthNavigation.requireAuth(
+                  context,
+                  title: 'Sign in to open Account',
+                  message:
+                      'Your account keeps your address, orders, and delivery details secure.',
+                );
+                if (!mounted) return;
+                if (!authenticated) return;
+              }
+
               setState(() {
                 currentpage = value;
               });

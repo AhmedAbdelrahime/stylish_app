@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hungry/core/auth/auth_navigation.dart';
 import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/pages/home/logic/favorites/favorites_controller.dart';
@@ -133,7 +134,16 @@ class CardItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(14),
-                          onTap: () => _favorites.toggle(product.id),
+                          onTap: () async {
+                            final authenticated = await AuthNavigation.requireAuth(
+                              context,
+                              title: 'Sign in to save favorites',
+                              message:
+                                  'Create an account or sign in to keep your wishlist saved.',
+                            );
+                            if (!context.mounted || !authenticated) return;
+                            await _favorites.toggle(product.id);
+                          },
                           child: Padding(
                             padding: const EdgeInsets.all(8),
                             child: Icon(
