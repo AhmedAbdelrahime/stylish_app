@@ -26,13 +26,13 @@ class CartItemModel {
   final int stockQuantity;
   final double? originalPrice;
   final String? color;
-  final int? size;
+  final String? size;
   final double rating;
 
   factory CartItemModel.fromProduct({
     required ProductModel product,
     required int quantity,
-    int? selectedSize,
+    String? selectedSize,
     String? color,
   }) {
     return CartItemModel(
@@ -51,7 +51,7 @@ class CartItemModel {
     );
   }
 
-  static String storageId(String productId, int? size) {
+  static String storageId(String productId, String? size) {
     return '$productId::${size ?? 'default'}';
   }
 

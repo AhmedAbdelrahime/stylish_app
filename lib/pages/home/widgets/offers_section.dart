@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/home/logic/offer/cubit/offer_cubit.dart';
 import 'package:hungry/pages/home/logic/offer/cubit/offer_state.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -39,9 +40,9 @@ class _OffersSectionState extends State<OffersSection> {
 
         if (state is OfferLoaded) {
           if (state.offers.isEmpty) {
-            return const SizedBox(
+            return SizedBox(
               height: 210,
-              child: Center(child: Text('No offers found')),
+              child: Center(child: Text(context.tr('No offers found'))),
             );
           }
 
@@ -153,9 +154,9 @@ class _OffersSectionState extends State<OffersSection> {
           );
         }
 
-        return const SizedBox(
+        return SizedBox(
           height: 210,
-          child: Center(child: Text('Loading offers...')),
+          child: Center(child: Text(context.tr('Loading offers...'))),
         );
       },
     );

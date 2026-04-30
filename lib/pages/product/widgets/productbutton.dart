@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 
 class ProductBotton extends StatelessWidget {
   const ProductBotton({
@@ -11,17 +13,9 @@ class ProductBotton extends StatelessWidget {
   });
 
   final double price;
-  final int? selectedSize;
+  final String? selectedSize;
   final VoidCallback onGoToCart;
   final VoidCallback onBuyNow;
-
-  String get _formattedPrice {
-    if (price == price.roundToDouble()) {
-      return price.toStringAsFixed(0);
-    }
-
-    return price.toStringAsFixed(2);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +44,7 @@ class ProductBotton extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '\u20B9$_formattedPrice',
+                          AppPrice.format(price),
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.w700,
@@ -60,8 +54,10 @@ class ProductBotton extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           selectedSize == null
-                              ? 'Ready to add this item'
-                              : 'Selected size: $selectedSize UK',
+                              ? context.tr('Ready to add this item')
+                              : context.tr('Selected size: {size}', {
+                                  'size': selectedSize,
+                                }),
                           style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.hintColor,
@@ -82,9 +78,9 @@ class ProductBotton extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: const Text(
-                        'Add to Cart',
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                      child: Text(
+                        context.tr('Add to Cart'),
+                        style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
@@ -101,9 +97,9 @@ class ProductBotton extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: const Text(
-                        'Buy Now',
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                      child: Text(
+                        context.tr('Buy Now'),
+                        style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),

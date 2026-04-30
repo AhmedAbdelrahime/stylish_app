@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
 import 'package:hungry/shared/custom_text.dart';
 
@@ -12,12 +14,13 @@ class ToggelSize extends StatelessWidget {
   });
 
   final ProductModel product;
-  final int? selectedSize;
-  final ValueChanged<int> onChanged;
+  final String? selectedSize;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    if (product.sizes.isEmpty) {
+    final sizes = product.availableSizes;
+    if (sizes.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -27,14 +30,16 @@ class ToggelSize extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomText(
-            text: 'Size: ${selectedSize ?? product.sizes.first} UK',
+            text: context.tr('Size: {size}', {
+              'size': selectedSize ?? sizes.first,
+            }),
             size: 14,
             weight: FontWeight.w600,
           ),
           Wrap(
             spacing: 10,
             runSpacing: 10,
-            children: product.sizes.map((size) {
+            children: sizes.map((size) {
               final isSelected = selectedSize == size;
 
               return GestureDetector(
@@ -56,7 +61,7 @@ class ToggelSize extends StatelessWidget {
                     ),
                   ),
                   child: CustomText(
-                    text: '$size UK',
+                    text: StoreSizes.label(size),
                     size: 14,
                     weight: FontWeight.w600,
                     color: isSelected ? Colors.white : AppColors.blackColor,

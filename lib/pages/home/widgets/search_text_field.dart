@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 
 class SearchTextField extends StatelessWidget {
   const SearchTextField({
@@ -48,7 +49,7 @@ class SearchTextField extends StatelessWidget {
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(vertical: 18),
             prefixIcon: const Icon(Icons.search, color: AppColors.grayColor),
-            hintText: hintText,
+            hintText: context.tr(hintText),
             hintStyle: const TextStyle(color: AppColors.grayColor),
             filled: true,
             fillColor: Colors.white,

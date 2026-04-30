@@ -21,6 +21,7 @@ class ProfileService {
         email: user.email ?? '',
         name: metadata['full_name']?.toString(),
         image: metadata['image']?.toString(),
+        phone: user.phone ?? metadata['phone']?.toString(),
       );
     }
 
@@ -99,6 +100,7 @@ class ProfileService {
       'email': user.email,
       'full_name': metadata['full_name']?.toString(),
       'image': metadata['image']?.toString(),
+      'phone': user.phone ?? metadata['phone']?.toString(),
     };
 
     await _supabase.from('profiles').upsert(payload);

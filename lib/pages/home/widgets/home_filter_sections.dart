@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 
 class HomeFilterSection extends StatelessWidget {
   const HomeFilterSection({super.key, required this.text});
@@ -20,7 +22,7 @@ class HomeFilterSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  text,
+                  context.tr(text),
                   style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,
@@ -28,9 +30,11 @@ class HomeFilterSection extends StatelessWidget {
                   ),
                 ),
                 const Gap(4),
-                const Text(
-                  'Refined collections with a cleaner storefront layout.',
-                  style: TextStyle(
+                Text(
+                  context.tr(
+                    'Refined collections with a cleaner storefront layout.',
+                  ),
+                  style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.hintColor,
                     height: 1.4,
@@ -40,12 +44,9 @@ class HomeFilterSection extends StatelessWidget {
             ),
           ),
           const Gap(12),
-          const _FilterChip(label: 'Sort', assetPath: 'assets/svgs/sort.svg'),
+          const _FilterChip(label: 'Sort', assetPath: StoreAssets.sortIcon),
           const Gap(8),
-          const _FilterChip(
-            label: 'Filter',
-            assetPath: 'assets/svgs/filter.svg',
-          ),
+          const _FilterChip(label: 'Filter', assetPath: StoreAssets.filterIcon),
         ],
       ),
     );
@@ -71,7 +72,7 @@ class _FilterChip extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            label,
+            context.tr(label),
             style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w500,

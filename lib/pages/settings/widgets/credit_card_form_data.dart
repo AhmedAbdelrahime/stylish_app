@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 
 import 'credit_card_input_styles.dart';
 
@@ -44,7 +45,7 @@ class CreditCardFormData extends StatelessWidget {
         cardHolderTextStyle: creditCardTextStyle,
 
         cardNumberDecoration: creditCardDecoration(
-          label: 'Number',
+          label: context.tr('Number'),
           hint: 'XXXX XXXX XXXX XXXX',
           suffixIcon: IconButton(
             icon: Icon(
@@ -57,13 +58,18 @@ class CreditCardFormData extends StatelessWidget {
         ),
 
         expiryDateDecoration: creditCardDecoration(
-          label: 'Expired Date',
+          label: context.tr('Expired Date'),
           hint: 'XX/XX',
         ),
 
-        cvvCodeDecoration: creditCardDecoration(label: 'CVV', hint: 'XXX'),
+        cvvCodeDecoration: creditCardDecoration(
+          label: context.tr('CVV'),
+          hint: 'XXX',
+        ),
 
-        cardHolderDecoration: creditCardDecoration(label: 'CARD HOLDER NAME'),
+        cardHolderDecoration: creditCardDecoration(
+          label: context.tr('CARD HOLDER NAME'),
+        ),
       ),
 
       onCreditCardModelChange: onCreditCardModelChange,

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 
 class SupabaseErrorMapper {
   static String map(dynamic error) {
@@ -9,8 +9,9 @@ class SupabaseErrorMapper {
       return 'Email or password is incorrect';
     }
 
-    if (message.contains('Email not confirmed')) {
-      return 'Please verify your email before logging in';
+    if (message.contains('Email not confirmed') ||
+        message.contains('EMAIL_CONFIRMATION_REQUIRED_FOR_THIS_ACCOUNT')) {
+      return 'This account is still unconfirmed in Supabase. Confirm it in Auth Users, or delete it and sign up again.';
     }
 
     if (message.contains('Could not open Google sign in')) {
@@ -34,7 +35,7 @@ class SupabaseErrorMapper {
     if (message.contains('Signup is disabled')) {
       return 'Account creation is currently disabled';
     }
-    // forgot PASSWORD
+    // Forgot password
     if (message.contains('No account found with this email')) {
       return 'No account found with this email';
     }
@@ -44,7 +45,7 @@ class SupabaseErrorMapper {
       return ' New password should be different \n from the old password';
     }
 
-    // SESSION
+    // Session
     if (message.contains('JWT expired')) {
       return 'Session expired. Please login again';
     }
@@ -68,12 +69,12 @@ class SupabaseErrorMapper {
     if (message.contains('This record already exists')) {
       return 'This record already exists';
     }
-    // ðŸŒ No internet / DNS / host lookup
+    // No internet / DNS / host lookup
     if (message.contains('ClientException with SocketException')) {
       return 'No internet connection.';
     }
 
-    // ðŸŒ Retryable network errors (Supabase)
+    // Retryable network errors (Supabase)
     if (message.contains('Failed host lookup') ||
         message.contains('Connection timed out') ||
         message.contains('Network is unreachable')) {
@@ -85,7 +86,7 @@ class SupabaseErrorMapper {
     if (kDebugMode) {
       debugPrint(message);
     }
-    // â“ Unknown
+    // Unknown
     return 'Something went wrong. Please try again.';
 
     // return _mapDatabaseError(error.message.toString());

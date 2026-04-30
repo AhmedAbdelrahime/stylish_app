@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/home/data/product_service.dart';
 import 'package:hungry/pages/home/logic/product/cubit/product_cubit.dart';
 import 'package:hungry/pages/home/logic/product/cubit/product_state.dart';
@@ -59,7 +61,8 @@ class _SearchPageState extends State<SearchPage> {
           product.description.toLowerCase().contains(query);
 
       final matchesRating = product.rating >= _minRating;
-      final matchesBudget = !_underFifty || product.price <= 50;
+      final matchesBudget =
+          !_underFifty || product.price <= StoreConfig.budgetFilterAmount;
       final matchesTopRated = !_topRatedOnly || product.rating >= 4;
 
       return matchesCategory &&
@@ -128,9 +131,12 @@ class _SearchPageState extends State<SearchPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Sort Products',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                Text(
+                  context.tr('Sort Products'),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 ..._SearchSortOption.values.map(
@@ -176,17 +182,17 @@ class _SearchPageState extends State<SearchPage> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Filter Products',
-                      style: TextStyle(
+                    Text(
+                      context.tr('Filter Products'),
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 18),
-                    const Text(
-                      'Minimum Rating',
-                      style: TextStyle(
+                    Text(
+                      context.tr('Minimum Rating'),
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: AppColors.blackColor,
@@ -209,7 +215,13 @@ class _SearchPageState extends State<SearchPage> {
                       contentPadding: EdgeInsets.zero,
                       activeColor: AppColors.redColor,
                       value: draftUnderFifty,
-                      title: const Text('Budget friendly: under \u20B950'),
+                      title: Text(
+                        context.tr('Budget friendly: under {amount}', {
+                          'amount': AppPrice.format(
+                            StoreConfig.budgetFilterAmount,
+                          ),
+                        }),
+                      ),
                       onChanged: (value) {
                         setModalState(() {
                           draftUnderFifty = value ?? false;
@@ -220,7 +232,9 @@ class _SearchPageState extends State<SearchPage> {
                       contentPadding: EdgeInsets.zero,
                       activeColor: AppColors.redColor,
                       value: draftTopRatedOnly,
-                      title: const Text('Only show top rated products (4.0+)'),
+                      title: Text(
+                        context.tr('Only show top rated products (4.0+)'),
+                      ),
                       onChanged: (value) {
                         setModalState(() {
                           draftTopRatedOnly = value ?? false;
@@ -247,7 +261,7 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                               padding: const EdgeInsets.symmetric(vertical: 16),
                             ),
-                            child: const Text('Reset'),
+                            child: Text(context.tr('Reset')),
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -267,7 +281,7 @@ class _SearchPageState extends State<SearchPage> {
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               elevation: 0,
                             ),
-                            child: const Text('Apply'),
+                            child: Text(context.tr('Apply')),
                           ),
                         ),
                       ],
@@ -321,9 +335,9 @@ class _SearchPageState extends State<SearchPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Discover Products',
-                        style: TextStyle(
+                      Text(
+                        context.tr('Discover Products'),
+                        style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           color: AppColors.blackColor,
@@ -332,8 +346,13 @@ class _SearchPageState extends State<SearchPage> {
                       const SizedBox(height: 4),
                       Text(
                         widget.initialCategoryName == null
-                            ? 'Use sorting and filters to narrow the catalog fast.'
-                            : 'Browsing ${widget.initialCategoryName} products with quick controls.',
+                            ? context.tr(
+                                'Use sorting and filters to narrow the catalog fast.',
+                              )
+                            : context.tr(
+                                'Browsing {category} products with quick controls.',
+                                {'category': widget.initialCategoryName},
+                              ),
                         style: const TextStyle(
                           fontSize: 13,
                           color: AppColors.hintColor,
@@ -387,7 +406,9 @@ class _SearchPageState extends State<SearchPage> {
                             child: _ActionChip(
                               label: _activeFilterCount == 0
                                   ? 'Filter'
-                                  : 'Filter ($_activeFilterCount)',
+                                  : context.tr('Filter ({count})', {
+                                      'count': _activeFilterCount,
+                                    }),
                               icon: Icons.tune_rounded,
                               onTap: _openFilterSheet,
                               highlighted: _activeFilterCount > 0,
@@ -441,7 +462,9 @@ class _SearchPageState extends State<SearchPage> {
                         );
                       }
 
-                      return const Center(child: Text('Loading products...'));
+                      return Center(
+                        child: Text(context.tr('Loading products...')),
+                      );
                     },
                   ),
                 ),
@@ -488,7 +511,8 @@ class _ActionChip extends StatelessWidget {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
-                  label,
+                  context.tr(label),
+                  textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 13,
@@ -534,7 +558,7 @@ class _SortOptionTile extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    title,
+                    context.tr(title),
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -567,23 +591,25 @@ class _EmptySearchState extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(
+          children: [
+            const Icon(
               Icons.search_off_rounded,
               size: 52,
               color: AppColors.grayColor,
             ),
-            SizedBox(height: 14),
+            const SizedBox(height: 14),
             Text(
-              'No products match these filters',
+              context.tr('No products match these filters'),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Try a broader search, lower the minimum rating, or clear active filters.',
+              context.tr(
+                'Try a broader search, lower the minimum rating, or clear active filters.',
+              ),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
                 color: AppColors.hintColor,
                 height: 1.4,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -179,7 +180,7 @@ class _ProductImage extends StatelessWidget {
       imageUrl,
       fit: BoxFit.cover,
       errorBuilder: (_, __, ___) =>
-          Image.asset('assets/images/cat.png', fit: BoxFit.cover),
+          Image.asset(StoreAssets.productImageFallback, fit: BoxFit.cover),
     );
   }
 }

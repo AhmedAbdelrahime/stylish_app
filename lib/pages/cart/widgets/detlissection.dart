@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/cart/widgets/size_qty_selector.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
 import 'package:hungry/shared/custom_text.dart';
@@ -15,13 +17,15 @@ class DetailesSection extends StatelessWidget {
   });
 
   final ProductModel product;
-  final int? selectedSize;
+  final String? selectedSize;
   final int quantity;
-  final ValueChanged<int> onSizeChanged;
+  final ValueChanged<String> onSizeChanged;
   final ValueChanged<int> onQuantityChanged;
 
   @override
   Widget build(BuildContext context) {
+    final sizes = product.availableSizes;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -55,10 +59,10 @@ class DetailesSection extends StatelessWidget {
               const Gap(10),
               Row(
                 children: [
-                  if (product.sizes.isNotEmpty) ...[
+                  if (sizes.isNotEmpty) ...[
                     SizeQtySelector(
-                      values: product.sizes,
-                      selectedValue: selectedSize ?? product.sizes.first,
+                      values: sizes,
+                      selectedValue: selectedSize ?? sizes.first,
                       text: 'Size',
                       onChanged: onSizeChanged,
                     ),
@@ -74,14 +78,20 @@ class DetailesSection extends StatelessWidget {
               ),
               const Gap(20),
               Row(
-                children: const [
+                children: [
                   Text(
-                    'Delivery by ',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                    context.tr('Delivery by '),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   Text(
-                    '1-3 business days',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    context.tr(StoreConfig.defaultDeliveryWindowLabel),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

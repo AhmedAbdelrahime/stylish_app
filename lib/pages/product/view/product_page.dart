@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/cart/data/cart_service.dart';
 import 'package:hungry/pages/cart/view/chekout.dart';
 import 'package:hungry/pages/cart/view/cart_page.dart';
@@ -31,14 +32,14 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final CartService _cartService = CartService();
-  int? _selectedSize;
+  String? _selectedSize;
   bool _isAddingToCart = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.product.sizes.isNotEmpty) {
-      _selectedSize = widget.product.sizes.first;
+    if (widget.product.availableSizes.isNotEmpty) {
+      _selectedSize = widget.product.availableSizes.first;
     }
   }
 
@@ -80,17 +81,27 @@ class _ProductPageState extends State<ProductPage> {
         SnackBar(
           content: Text(
             quantity > 1
-                ? 'Cart updated. You now have $quantity of this item.'
-                : 'Added to cart.',
+                ? context.tr(
+                    'Cart updated. You now have {count} of this item.',
+                    {'count': quantity},
+                  )
+                : context.tr('Added to cart.'),
           ),
-          action: SnackBarAction(label: 'View Cart', onPressed: _openCartPage),
+          action: SnackBarAction(
+            label: context.tr('View Cart'),
+            onPressed: _openCartPage,
+          ),
         ),
       );
     } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        SnackBar(
+          content: Text(
+            context.tr(e.toString().replaceFirst('Exception: ', '')),
+          ),
+        ),
       );
     } finally {
       if (mounted) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 
 class CustomAuthTextfiled extends StatefulWidget {
   const CustomAuthTextfiled({
@@ -33,7 +34,10 @@ class _CustomAuthTextfiledState extends State<CustomAuthTextfiled> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      validator: widget.validator,
+      validator: (value) {
+        final error = widget.validator?.call(value);
+        return error == null ? null : context.tr(error);
+      },
       keyboardType: widget.keyboardType,
       controller: widget.controller,
       obscureText: _obsecureText,
@@ -71,7 +75,7 @@ class _CustomAuthTextfiledState extends State<CustomAuthTextfiled> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: AppColors.redColor, width: 1),
         ),
-        hintText: widget.labelText,
+        hintText: context.tr(widget.labelText),
         hintStyle: TextStyle(color: AppColors.hintColor, fontSize: 14),
         filled: true,
         fillColor: AppColors.grayColor.withValues(alpha: .2),

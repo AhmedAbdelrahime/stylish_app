@@ -1,13 +1,17 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/auth/data/auth_service.dart';
 import 'package:hungry/pages/cart/view/cart_page.dart';
 import 'package:hungry/pages/home/logic/favorites/favorites_controller.dart';
 import 'package:hungry/pages/home/view/wishlist_page.dart';
 import 'package:hungry/pages/orders/view/orders_page.dart';
 import 'package:hungry/pages/settings/view/settings_page.dart';
+import 'package:hungry/pages/settings/widgets/contact_us_section.dart';
+import 'package:hungry/pages/settings/widgets/language_section.dart';
 import 'package:hungry/pages/settings/widgets/logout_dialog.dart';
 
 class HomeAppBar extends StatelessWidget {
@@ -37,24 +41,32 @@ class HomeAppBar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Quick Actions',
-                    style: TextStyle(
+                  Text(
+                    context.tr('Menu'),
+                    style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: AppColors.blackColor,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Open the sections people usually need most.',
-                    style: TextStyle(
+                  Text(
+                    context.tr(
+                      'Account, language, support, and order shortcuts.',
+                    ),
+                    style: const TextStyle(
                       fontSize: 13,
                       color: AppColors.hintColor,
                       height: 1.4,
                     ),
                   ),
                   const SizedBox(height: 18),
+                  const LanguageSection(),
+                  const SizedBox(height: 12),
+                  const ContactUsSection(),
+                  const SizedBox(height: 18),
+                  _SectionLabel(text: 'Shortcuts'),
+                  const SizedBox(height: 10),
                   _MenuTile(
                     icon: Icons.favorite_border_rounded,
                     title: 'Wishlist',
@@ -98,9 +110,9 @@ class HomeAppBar extends StatelessWidget {
                     },
                   ),
                   _MenuTile(
-                    icon: Icons.settings_outlined,
-                    title: 'Settings',
-                    subtitle: 'Manage profile and address',
+                    icon: Icons.person_outline_rounded,
+                    title: 'Account',
+                    subtitle: 'Manage profile, address, and payment',
                     onTap: () {
                       Navigator.pop(sheetContext);
                       Navigator.push(
@@ -131,7 +143,9 @@ class HomeAppBar extends StatelessWidget {
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(SupabaseErrorMapper.map(error)),
+                            content: Text(
+                              context.tr(SupabaseErrorMapper.map(error)),
+                            ),
                           ),
                         );
                       }
@@ -165,11 +179,11 @@ class HomeAppBar extends StatelessWidget {
                     color: AppColors.blackColor,
                     size: 20,
                   )
-                : SvgPicture.asset('assets/svgs/menu.svg', height: 22),
+                : SvgPicture.asset(StoreAssets.menuIcon, height: 22),
           ),
           Expanded(
             child: Center(
-              child: SvgPicture.asset('assets/logo/logo.svg', height: 35),
+              child: SvgPicture.asset(StoreAssets.logo, height: 35),
             ),
           ),
           Row(
@@ -247,13 +261,13 @@ class HomeAppBar extends StatelessWidget {
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Image.asset(
-                              'assets/images/profile.png',
+                              StoreAssets.fallbackProfileImage,
                               fit: BoxFit.cover,
                             );
                           },
                         )
                       : Image.asset(
-                          'assets/images/profile.png',
+                          StoreAssets.fallbackProfileImage,
                           fit: BoxFit.cover,
                         ),
                 ),
@@ -316,7 +330,7 @@ class _MenuTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        context.tr(title),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
@@ -325,7 +339,7 @@ class _MenuTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        subtitle,
+                        context.tr(subtitle),
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.hintColor,
@@ -344,6 +358,24 @@ class _MenuTile extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      context.tr(text),
+      style: const TextStyle(
+        color: AppColors.hintColor,
+        fontSize: 12,
+        fontWeight: FontWeight.w800,
       ),
     );
   }

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
+import 'package:hungry/pages/cart/data/whatsapp_order_service.dart';
 import 'package:hungry/pages/orders/data/order_history_model.dart';
 import 'package:hungry/pages/orders/data/order_history_service.dart';
 import 'package:hungry/pages/product/widgets/product_app_bar.dart';
@@ -17,6 +20,8 @@ class OrderDetailsPage extends StatefulWidget {
 
 class _OrderDetailsPageState extends State<OrderDetailsPage> {
   final OrderHistoryService _orderService = OrderHistoryService();
+  final WhatsAppOrderService _whatsAppOrderService =
+      const WhatsAppOrderService();
 
   OrderHistoryModel? _order;
   bool _isLoading = true;
@@ -57,6 +62,27 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     }
   }
 
+  Future<void> _openWhatsAppSupport() async {
+    final order = _order;
+    if (order == null) return;
+
+    try {
+      await _whatsAppOrderService.openOrder(
+        WhatsAppOrderRequest.fromOrder(order),
+      );
+    } on WhatsAppOrderException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.tr(error.message))));
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.tr(SupabaseErrorMapper.map(error)))),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,6 +120,8 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         children: [
           _SummaryHeader(order: order),
           const SizedBox(height: 14),
+          _WhatsAppSupportCard(onTap: _openWhatsAppSupport),
+          const SizedBox(height: 14),
           _TrackingTimeline(order: order),
           const SizedBox(height: 14),
           _InfoSection(
@@ -119,7 +147,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             child: Text(
               order.shippingAddress?.trim().isNotEmpty == true
                   ? order.shippingAddress!
-                  : 'No delivery address saved for this order.',
+                  : context.tr('No delivery address saved for this order.'),
               style: const TextStyle(
                 color: AppColors.hintColor,
                 fontSize: 13,
@@ -177,7 +205,9 @@ class _SummaryHeader extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Placed ${_formatDate(order.createdAt)}',
+                      context.tr('Placed {date}', {
+                        'date': _formatDate(order.createdAt),
+                      }),
                       style: const TextStyle(
                         color: AppColors.hintColor,
                         fontSize: 12,
@@ -196,14 +226,87 @@ class _SummaryHeader extends StatelessWidget {
                 label: 'Items',
                 value: order.totalQuantity.toString(),
               ),
-              _HeaderMetric(label: 'Payment', value: order.paymentLabel),
+              _HeaderMetric(
+                label: 'Payment',
+                value: context.tr(order.paymentLabel),
+              ),
               _HeaderMetric(
                 label: 'Total',
-                value: '${order.currency} ${_price(order.totalAmount)}',
+                value: AppPrice.format(
+                  order.totalAmount,
+                  currencyCode: order.currency,
+                ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _WhatsAppSupportCard extends StatelessWidget {
+  const _WhatsAppSupportCard({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                height: 46,
+                width: 46,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF128C7E).withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.chat_bubble_outline,
+                  color: Color(0xFF128C7E),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.tr('WhatsApp Support'),
+                      style: const TextStyle(
+                        color: AppColors.blackColor,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      context.tr('Send this order summary to the store.'),
+                      style: const TextStyle(
+                        color: AppColors.hintColor,
+                        fontSize: 12,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: AppColors.hintColor,
+                size: 16,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -222,7 +325,7 @@ class _HeaderMetric extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            label,
+            context.tr(label),
             style: const TextStyle(color: AppColors.hintColor, fontSize: 11),
           ),
           const SizedBox(height: 4),
@@ -283,10 +386,10 @@ class _TrackingTimeline extends StatelessWidget {
           children: [
             Icon(Icons.cancel_outlined, color: Colors.red.shade700),
             const SizedBox(width: 10),
-            const Expanded(
+            Expanded(
               child: Text(
-                'This order was cancelled.',
-                style: TextStyle(
+                context.tr('This order was cancelled.'),
+                style: const TextStyle(
                   color: AppColors.blackColor,
                   fontWeight: FontWeight.w700,
                 ),
@@ -366,7 +469,7 @@ class _TrackingRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  step.title,
+                  context.tr(step.title),
                   style: TextStyle(
                     color: isComplete
                         ? AppColors.blackColor
@@ -377,7 +480,7 @@ class _TrackingRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  isCurrent ? 'Current status' : step.subtitle,
+                  context.tr(isCurrent ? 'Current status' : step.subtitle),
                   style: const TextStyle(
                     color: AppColors.hintColor,
                     fontSize: 12,
@@ -455,7 +558,12 @@ class _OrderItemRow extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                'Qty ${item.quantity}${item.selectedSize == null ? '' : ' · Size ${item.selectedSize}'}',
+                item.selectedSize == null
+                    ? context.tr('Qty {count}', {'count': item.quantity})
+                    : context.tr('Qty {count} · Size {size}', {
+                        'count': item.quantity,
+                        'size': item.selectedSize,
+                      }),
                 style: const TextStyle(
                   color: AppColors.hintColor,
                   fontSize: 12,
@@ -466,7 +574,7 @@ class _OrderItemRow extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         Text(
-          '$currency ${_price(item.lineTotal)}',
+          AppPrice.format(item.lineTotal, currencyCode: currency),
           style: const TextStyle(
             color: AppColors.blackColor,
             fontSize: 13,
@@ -491,22 +599,34 @@ class _PaymentSection extends StatelessWidget {
         children: [
           _AmountRow(
             label: 'Subtotal',
-            value: '${order.currency} ${_price(order.subtotal)}',
+            value: AppPrice.format(
+              order.subtotal,
+              currencyCode: order.currency,
+            ),
           ),
           _AmountRow(
             label: 'Shipping',
-            value: '${order.currency} ${_price(order.shippingFee)}',
+            value: AppPrice.format(
+              order.shippingFee,
+              currencyCode: order.currency,
+            ),
           ),
           if (order.discountAmount > 0)
             _AmountRow(
               label: 'Discount',
-              value: '- ${order.currency} ${_price(order.discountAmount)}',
+              value: AppPrice.discount(
+                order.discountAmount,
+                currencyCode: order.currency,
+              ),
               valueColor: Colors.green.shade700,
             ),
           Divider(height: 24, color: Colors.grey.shade200),
           _AmountRow(
             label: 'Total',
-            value: '${order.currency} ${_price(order.totalAmount)}',
+            value: AppPrice.format(
+              order.totalAmount,
+              currencyCode: order.currency,
+            ),
             isStrong: true,
           ),
         ],
@@ -536,7 +656,7 @@ class _AmountRow extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              label,
+              context.tr(label),
               style: TextStyle(
                 color: isStrong ? AppColors.blackColor : AppColors.hintColor,
                 fontSize: isStrong ? 15 : 13,
@@ -577,7 +697,7 @@ class _InfoSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            context.tr(title),
             style: const TextStyle(
               color: AppColors.blackColor,
               fontSize: 16,
@@ -607,7 +727,7 @@ class _StatusPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        text,
+        context.tr(text),
         style: TextStyle(
           color: color,
           fontSize: 12,
@@ -644,7 +764,7 @@ class _StateMessage extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              title,
+              context.tr(title),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: AppColors.blackColor,
@@ -654,7 +774,7 @@ class _StateMessage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              message,
+              context.tr(message),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: AppColors.hintColor,
@@ -673,7 +793,7 @@ class _StateMessage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: const Text('Try Again'),
+              child: Text(context.tr('Try Again')),
             ),
           ],
         ),
@@ -700,12 +820,4 @@ String _formatDate(DateTime value) {
   final day = value.day.toString().padLeft(2, '0');
   final month = value.month.toString().padLeft(2, '0');
   return '$day/$month/${value.year}';
-}
-
-String _price(double value) {
-  if (value == value.roundToDouble()) {
-    return value.toStringAsFixed(0);
-  }
-
-  return value.toStringAsFixed(2);
 }

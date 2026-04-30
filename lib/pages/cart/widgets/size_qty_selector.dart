@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/shared/custom_text.dart';
 
-class SizeQtySelector extends StatelessWidget {
+class SizeQtySelector<T> extends StatelessWidget {
   const SizeQtySelector({
     super.key,
     required this.values,
@@ -11,10 +11,10 @@ class SizeQtySelector extends StatelessWidget {
     required this.onChanged,
   });
 
-  final List<int> values;
-  final int selectedValue;
+  final List<T> values;
+  final T selectedValue;
   final String text;
-  final ValueChanged<int> onChanged;
+  final ValueChanged<T> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class SizeQtySelector extends StatelessWidget {
       child: Row(
         children: [
           CustomText(text: '$text:', size: 14, weight: FontWeight.w400),
-          DropdownButton<int>(
+          DropdownButton<T>(
             dropdownColor: Colors.white,
             icon: const Icon(
               Icons.keyboard_arrow_down_outlined,
@@ -37,7 +37,7 @@ class SizeQtySelector extends StatelessWidget {
             underline: const SizedBox(),
             value: selectedValue,
             items: values.map((value) {
-              return DropdownMenuItem<int>(
+              return DropdownMenuItem<T>(
                 value: value,
                 child: CustomText(
                   text: value.toString(),

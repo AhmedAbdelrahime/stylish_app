@@ -22,11 +22,13 @@ class AppSnackBar {
             children: [
               Icon(icon, color: iconColor),
               Gap(5),
-              CustomText(
-                text: text,
-                size: 14,
-                weight: FontWeight.w400,
-                color: textColor,
+              Expanded(
+                child: CustomText(
+                  text: text,
+                  size: 14,
+                  weight: FontWeight.w400,
+                  color: textColor,
+                ),
               ),
             ],
           ),

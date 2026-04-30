@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/home/data/product_service.dart';
 import 'package:hungry/pages/home/logic/favorites/favorites_controller.dart';
 import 'package:hungry/pages/home/logic/product/cubit/product_cubit.dart';
@@ -22,20 +23,20 @@ class WishlistPage extends StatelessWidget {
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
         titleSpacing: 20,
-        title: const Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Wishlist',
-              style: TextStyle(
+              context.tr('Wishlist'),
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: AppColors.blackColor,
               ),
             ),
             Text(
-              'Your saved favorites in one place.',
-              style: TextStyle(fontSize: 12, color: AppColors.hintColor),
+              context.tr('Your saved favorites in one place.'),
+              style: const TextStyle(fontSize: 12, color: AppColors.hintColor),
             ),
           ],
         ),
@@ -94,7 +95,7 @@ class WishlistPage extends StatelessWidget {
                   );
                 }
 
-                return const Center(child: Text('Loading wishlist...'));
+                return Center(child: Text(context.tr('Loading wishlist...')));
               },
             ),
           );
@@ -114,23 +115,25 @@ class _EmptyWishlistState extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(
+          children: [
+            const Icon(
               Icons.favorite_border_rounded,
               size: 56,
               color: AppColors.grayColor,
             ),
-            SizedBox(height: 14),
+            const SizedBox(height: 14),
             Text(
-              'Your wishlist is empty',
+              context.tr('Your wishlist is empty'),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Tap the heart on any product card to save it here for later.',
+              context.tr(
+                'Tap the heart on any product card to save it here for later.',
+              ),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
                 color: AppColors.hintColor,
                 height: 1.4,

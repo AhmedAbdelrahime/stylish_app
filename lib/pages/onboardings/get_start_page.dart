@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/pages/auth/screens/login_screen.dart';
 import 'package:hungry/pages/onboardings/services/onbordingserv.dart';
@@ -16,7 +17,7 @@ class GetStartPage extends StatelessWidget {
         decoration: BoxDecoration(
           image: const DecorationImage(
             fit: BoxFit.fill,
-            image: AssetImage('assets/images/get_start.png'),
+            image: AssetImage(StoreAssets.getStartedBackground),
           ),
         ),
         child: Padding(

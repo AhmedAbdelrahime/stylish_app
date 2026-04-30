@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/shared/custom_text.dart';
 
 class AddressSection extends StatelessWidget {
@@ -15,7 +17,7 @@ class AddressSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            SvgPicture.asset('assets/svgs/location.svg'),
+            SvgPicture.asset(StoreAssets.locationIcon),
             const SizedBox(width: 10),
             CustomText(
               text: 'Delivery Address',
@@ -57,23 +59,27 @@ class AddressSection extends StatelessWidget {
                                 weight: FontWeight.w600,
                               ),
                               Gap(170),
-                              SvgPicture.asset('assets/svgs/edit.svg'),
+                              SvgPicture.asset(StoreAssets.editIcon),
                             ],
                           ),
                         ],
                       ),
                       const SizedBox(height: 5),
                       CustomText(
-                        text: '216 St Paul\'s Rd, London N1 2LL,UK ',
+                        text: StoreLocation.sampleAddress,
                         size: 14,
                         weight: FontWeight.w400,
                         color: AppColors.blackColor,
                       ),
-                      CustomText(
-                        text: 'Contact :  +44-784232',
-                        size: 14,
-                        weight: FontWeight.w400,
-                        color: AppColors.blackColor,
+                      Text(
+                        context.tr('Contact: {phone}', {
+                          'phone': StoreContact.displaySupportPhone,
+                        }),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.blackColor,
+                        ),
                       ),
                     ],
                   ),

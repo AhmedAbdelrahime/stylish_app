@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/shared/custom_text.dart';
 
 class CustomOrederText extends StatelessWidget {
@@ -19,7 +20,7 @@ class CustomOrederText extends StatelessWidget {
       children: [
         CustomText(text: text, size: 18, weight: FontWeight.w400, color: color),
         CustomText(
-          text: '\$ $price',
+          text: AppPrice.format(double.tryParse(price) ?? 0),
           size: 18,
           weight: FontWeight.w400,
           color: color,

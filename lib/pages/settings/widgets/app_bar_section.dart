@@ -57,7 +57,7 @@ class _AppBarSectionState extends State<AppBarSection> {
     final canGoBack = Navigator.of(context).canPop();
 
     return ProductAppBar(
-      text: 'Settings',
+      text: 'Account',
       padiing: 20,
       showbackicon: canGoBack,
       isSettingpage: true,

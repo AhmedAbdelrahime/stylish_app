@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 
 class CustomText extends StatelessWidget {
   const CustomText({
@@ -18,8 +19,10 @@ class CustomText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizedText = context.tr(text);
+
     return Text(
-      text,
+      localizedText,
 
       style: TextStyle(
         fontSize: size,
@@ -30,7 +33,7 @@ class CustomText extends StatelessWidget {
 
         decoration: decoration, // 👈 strike-through
         // overflow: TextOverflow.ellipsis,
-        letterSpacing: .5,
+        letterSpacing: 0,
         // fontFamily: GoogleFonts.montserrat().fontFamily,
       ),
 

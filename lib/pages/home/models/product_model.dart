@@ -1,3 +1,5 @@
+import 'package:hungry/core/config/store_config.dart';
+
 class ProductModel {
   final String id;
   final String name;
@@ -8,7 +10,7 @@ class ProductModel {
   final double rating;
   final String? mainImageUrl;
   final List<String> imageUrls;
-  final List<int> sizes;
+  final List<String> sizes;
   final String? categoryId;
   final int stockQuantity;
   final int lowStockThreshold;
@@ -41,12 +43,7 @@ class ProductModel {
             ?.map((item) => item.toString())
             .toList() ??
         [];
-    final sizes =
-        (json['sizes'] as List<dynamic>?)
-            ?.map((item) => int.tryParse(item.toString()) ?? 0)
-            .where((size) => size > 0)
-            .toList() ??
-        [];
+    final sizes = StoreSizes.normalizeList(json['sizes'] as List<dynamic>?);
 
     return ProductModel(
       id: json['id'].toString(),
@@ -82,4 +79,12 @@ class ProductModel {
       stockQuantity > 0 && stockQuantity <= lowStockThreshold;
 
   bool get isInStock => stockQuantity > 0;
+
+  List<String> get availableSizes {
+    if (sizes.isNotEmpty) {
+      return sizes;
+    }
+
+    return StoreSizes.defaultsForProduct(name: name, title: title);
+  }
 }

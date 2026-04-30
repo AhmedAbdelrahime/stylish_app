@@ -1,13 +1,16 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/pages/auth/widgets/app_snackbar.dart';
 import 'package:hungry/pages/orders/view/orders_page.dart';
+import 'package:hungry/pages/settings/data/location_address_service.dart';
 import 'package:hungry/pages/settings/data/profile_service.dart';
 import 'package:hungry/pages/settings/data/user_model.dart';
+import 'package:hungry/pages/settings/view/map_address_picker_page.dart';
 import 'package:hungry/pages/settings/widgets/app_bar_section.dart';
+import 'package:hungry/pages/settings/widgets/contact_us_section.dart';
 import 'package:hungry/pages/settings/widgets/custom_bottom_sheet.dart';
 import 'package:hungry/pages/settings/widgets/image_section_widget.dart';
-import 'package:hungry/pages/settings/widgets/payment_section.dart';
+import 'package:hungry/pages/settings/widgets/language_section.dart';
 import 'package:hungry/pages/settings/widgets/setting_form.dart';
 import 'package:hungry/pages/settings/widgets/smart_refresh_widget.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -22,6 +25,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   final TextEditingController pinCodeontroller = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
@@ -31,14 +35,18 @@ class _SettingsPageState extends State<SettingsPage> {
     initialRefresh: false,
   );
   final ProfileService _profileService = ProfileService();
+  final LocationAddressService _locationAddressService =
+      LocationAddressService();
   bool isloading = false;
   bool isloadingData = false;
   bool isDelete = false;
+  bool isDetectingLocation = false;
   UserModel? _user;
   @override
   void dispose() {
     nameController.dispose();
     emailController.dispose();
+    phoneController.dispose();
     pinCodeontroller.dispose();
     addressController.dispose();
     cityController.dispose();
@@ -56,6 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
     if (_user != null) {
       nameController.text = _user!.name ?? '';
       emailController.text = _user!.email;
+      phoneController.text = _user!.phone ?? '';
       addressController.text = _user!.address ?? '';
       cityController.text = _user!.city ?? '';
       stateController.text = _user!.state ?? '';
@@ -72,6 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
       userId: _user!.userId,
       email: _user!.email,
       name: nameController.text,
+      phone: phoneController.text,
       address: addressController.text,
       city: cityController.text,
       state: stateController.text,
@@ -88,6 +98,81 @@ class _SettingsPageState extends State<SettingsPage> {
       text: 'Profile updated successfully.',
       backgroundColor: Colors.green,
     );
+  }
+
+  Future<void> useCurrentLocation() async {
+    setState(() => isDetectingLocation = true);
+
+    try {
+      final detectedAddress = await _locationAddressService
+          .detectCurrentAddress();
+      if (!mounted) return;
+
+      applyDetectedAddress(detectedAddress);
+      AppSnackBar.show(
+        context: context,
+        text: 'Address detected successfully.',
+        backgroundColor: Colors.green,
+        icon: Icons.check_circle_outline,
+      );
+    } on LocationAddressException catch (error) {
+      if (!mounted) return;
+      AppSnackBar.show(
+        context: context,
+        text: error.message,
+        backgroundColor: AppColors.redColor,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      AppSnackBar.show(
+        context: context,
+        text: 'Could not detect your address.',
+        backgroundColor: AppColors.redColor,
+      );
+    } finally {
+      if (mounted) setState(() => isDetectingLocation = false);
+    }
+  }
+
+  Future<void> pickAddressOnMap() async {
+    final detectedAddress = await Navigator.push<DetectedAddress>(
+      context,
+      MaterialPageRoute(builder: (_) => const MapAddressPickerPage()),
+    );
+
+    if (!mounted || detectedAddress == null) return;
+
+    applyDetectedAddress(detectedAddress);
+    AppSnackBar.show(
+      context: context,
+      text: 'Address selected from map.',
+      backgroundColor: Colors.green,
+      icon: Icons.check_circle_outline,
+    );
+  }
+
+  void applyDetectedAddress(DetectedAddress detectedAddress) {
+    final addressText = detectedAddress.address.isNotEmpty
+        ? detectedAddress.address
+        : '${detectedAddress.latitude.toStringAsFixed(6)}, '
+              '${detectedAddress.longitude.toStringAsFixed(6)}';
+
+    setState(() {
+      addressController.text = addressText;
+
+      if (detectedAddress.city.isNotEmpty) {
+        cityController.text = detectedAddress.city;
+      }
+      if (detectedAddress.state.isNotEmpty) {
+        stateController.text = detectedAddress.state;
+      }
+      if (detectedAddress.country.isNotEmpty) {
+        countryController.text = detectedAddress.country;
+      }
+      if (detectedAddress.pincode.isNotEmpty) {
+        pinCodeontroller.text = detectedAddress.pincode;
+      }
+    });
   }
 
   @override
@@ -125,19 +210,27 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: [
                           ImageSectionWidget(),
                           const SizedBox(height: 16),
+                          const LanguageSection(),
+                          const SizedBox(height: 16),
 
                           SettingForm(
                             nameController: nameController,
                             emailController: emailController,
+                            phoneController: phoneController,
                             pinCodeontroller: pinCodeontroller,
                             addressController: addressController,
                             cityController: cityController,
                             stateController: stateController,
                             countryController: countryController,
+                            isDetectingLocation: isDetectingLocation,
+                            onUseCurrentLocation: useCurrentLocation,
+                            onPickOnMap: pickAddressOnMap,
                           ),
                           const SizedBox(height: 16),
                           _OrdersShortcut(),
-                          PaymentSection(),
+                          const SizedBox(height: 16),
+                          const ContactUsSection(),
+                          const SizedBox(height: 100),
                         ],
                       ),
                     ),

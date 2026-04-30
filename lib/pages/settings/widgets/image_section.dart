@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 
 class ImageSection extends StatelessWidget {
@@ -15,7 +16,8 @@ class ImageSection extends StatelessWidget {
         children: [
           ClipOval(
             child: Image(
-              image: image ?? AssetImage('assets/images/profile.png'),
+              image:
+                  image ?? const AssetImage(StoreAssets.fallbackProfileImage),
               fit: BoxFit.cover,
               width: 120,
               height: 120,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/pages/cart/widgets/cart_btn.dart';
 import 'package:hungry/shared/custom_text.dart';
@@ -23,8 +24,8 @@ class LogoutDialog extends StatelessWidget {
           children: [
             SvgPicture.asset(
               isDeleteCard ?? false
-                  ? 'assets/svgs/deleteCard.svg'
-                  : 'assets/svgs/logout.svg',
+                  ? StoreAssets.deleteCardIcon
+                  : StoreAssets.logoutIcon,
               colorFilter: const ColorFilter.mode(
                 AppColors.redColor,
                 BlendMode.srcIn,

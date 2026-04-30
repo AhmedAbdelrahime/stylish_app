@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/cart/data/cart_item_model.dart';
 
 class ShppingCard extends StatelessWidget {
@@ -20,22 +22,14 @@ class ShppingCard extends StatelessWidget {
   final VoidCallback onRemove;
   final bool isUpdating;
 
-  String _price(double value) {
-    if (value == value.roundToDouble()) {
-      return value.toStringAsFixed(0);
-    }
-
-    return value.toStringAsFixed(2);
-  }
-
   @override
   Widget build(BuildContext context) {
     final canIncrease = item.isInStock && item.quantity < item.stockQuantity;
     final stockLabel = !item.isInStock
-        ? 'Out of stock'
+        ? context.tr('Out of stock')
         : item.isLowStock
-        ? 'Only ${item.stockQuantity} left'
-        : 'In stock';
+        ? context.tr('Only {count} left', {'count': item.stockQuantity})
+        : context.tr('In stock');
 
     return Card(
       elevation: 0,
@@ -82,7 +76,11 @@ class ShppingCard extends StatelessWidget {
                         runSpacing: 8,
                         children: [
                           if (item.size != null)
-                            _MetaChip(label: 'Size ${item.size}'),
+                            _MetaChip(
+                              label: context.tr('Size {size}', {
+                                'size': item.size,
+                              }),
+                            ),
                           if (item.color != null &&
                               item.color!.trim().isNotEmpty)
                             _MetaChip(label: item.color!.trim()),
@@ -129,7 +127,7 @@ class ShppingCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '₹${_price(item.price)}',
+                      AppPrice.format(item.price),
                       style: const TextStyle(
                         fontSize: 19,
                         fontWeight: FontWeight.w800,
@@ -141,7 +139,7 @@ class ShppingCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            '₹${_price(item.originalPrice ?? item.price)}',
+                            AppPrice.format(item.originalPrice ?? item.price),
                             style: TextStyle(
                               fontSize: 13,
                               color: AppColors.grayColor,
@@ -150,7 +148,9 @@ class ShppingCard extends StatelessWidget {
                           ),
                           const Gap(8),
                           Text(
-                            '${item.discountPercentage}% off',
+                            context.tr('{percent}% off', {
+                              'percent': item.discountPercentage,
+                            }),
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
@@ -180,7 +180,7 @@ class ShppingCard extends StatelessWidget {
                 TextButton.icon(
                   onPressed: isUpdating ? null : onRemove,
                   icon: const Icon(Icons.delete_outline, size: 18),
-                  label: const Text('Remove'),
+                  label: Text(context.tr('Remove')),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.redColor,
                     padding: EdgeInsets.zero,
@@ -189,7 +189,7 @@ class ShppingCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  'Line total',
+                  context.tr('Line total'),
                   style: TextStyle(
                     fontSize: 13,
                     color: AppColors.hintColor.withValues(alpha: 0.9),
@@ -197,7 +197,7 @@ class ShppingCard extends StatelessWidget {
                 ),
                 const Gap(10),
                 Text(
-                  '₹${_price(item.lineTotal)}',
+                  AppPrice.format(item.lineTotal),
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,

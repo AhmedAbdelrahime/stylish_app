@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 
 class AddPaymentBtn extends StatelessWidget {
   const AddPaymentBtn({super.key, required this.onValidate});
@@ -21,9 +22,9 @@ class AddPaymentBtn extends StatelessWidget {
         ),
         padding: const EdgeInsets.symmetric(vertical: 15),
         alignment: Alignment.center,
-        child: const Text(
-          'Save Card',
-          style: TextStyle(
+        child: Text(
+          context.tr('Save Card'),
+          style: const TextStyle(
             color: Colors.black,
             fontFamily: 'halter',
             fontSize: 14,

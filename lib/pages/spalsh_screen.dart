@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/pages/auth/data/auth_gate.dart';
 
@@ -62,7 +63,7 @@ class _SpalshScreenState extends State<SpalshScreen>
           child: ScaleTransition(
             scale: _logoScale,
             child: Center(
-              child: SvgPicture.asset('assets/logo/logo.svg', width: 300),
+              child: SvgPicture.asset(StoreAssets.logo, width: 300),
             ),
           ),
         ),

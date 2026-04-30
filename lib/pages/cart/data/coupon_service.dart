@@ -16,6 +16,16 @@ class AppliedCoupon {
   final int usedCount;
 }
 
+class CouponException implements Exception {
+  const CouponException(this.messageKey, [this.values = const {}]);
+
+  final String messageKey;
+  final Map<String, Object?> values;
+
+  @override
+  String toString() => messageKey;
+}
+
 class CouponService {
   CouponService({SupabaseClient? supabase})
     : _supabase = supabase ?? Supabase.instance.client;
@@ -28,7 +38,7 @@ class CouponService {
   }) async {
     final normalizedCode = code.trim().toUpperCase();
     if (normalizedCode.isEmpty) {
-      throw Exception('Enter a coupon code first');
+      throw const CouponException('Enter a coupon code first');
     }
 
     final data = await _supabase
@@ -38,12 +48,12 @@ class CouponService {
         .maybeSingle();
 
     if (data == null) {
-      throw Exception('Coupon code not found');
+      throw const CouponException('Coupon code not found');
     }
 
     final isActive = data['is_active'] == true;
     if (!isActive) {
-      throw Exception('This coupon is not active');
+      throw const CouponException('This coupon is not active');
     }
 
     final now = DateTime.now().toUtc();
@@ -51,24 +61,24 @@ class CouponService {
     final expiresAt = _parseDateTime(data['expires_at']);
 
     if (startsAt != null && now.isBefore(startsAt)) {
-      throw Exception('This coupon is not active yet');
+      throw const CouponException('This coupon is not active yet');
     }
 
     if (expiresAt != null && now.isAfter(expiresAt)) {
-      throw Exception('This coupon has expired');
+      throw const CouponException('This coupon has expired');
     }
 
     final usageLimit = data['usage_limit'] as int?;
     final usedCount = (data['used_count'] as num?)?.toInt() ?? 0;
     if (usageLimit != null && usedCount >= usageLimit) {
-      throw Exception('This coupon has reached its usage limit');
+      throw const CouponException('This coupon has reached its usage limit');
     }
 
     final minOrderAmount = (data['min_order_amount'] as num?)?.toDouble() ?? 0;
     if (subtotal < minOrderAmount) {
-      throw Exception(
-        'Coupon requires a minimum order of ₹${_formatAmount(minOrderAmount)}',
-      );
+      throw CouponException('Coupon requires a minimum order of {amount}', {
+        'amount': '\u20B9${_formatAmount(minOrderAmount)}',
+      });
     }
 
     final discountType = (data['discount_type'] ?? 'percent').toString();

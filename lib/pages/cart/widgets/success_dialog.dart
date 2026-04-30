@@ -1,7 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/shared/custom_text.dart';
 
 class SuccessDialog extends StatelessWidget {
@@ -21,7 +23,7 @@ class SuccessDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset('assets/svgs/success.svg'),
+            SvgPicture.asset(StoreAssets.successIcon),
             Gap(10),
             Center(
               child: CustomText(
@@ -44,7 +46,7 @@ class SuccessDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('Done'),
+                    child: Text(context.tr('Done')),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -59,7 +61,7 @@ class SuccessDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text('Track Order'),
+                    child: Text(context.tr('Track Order')),
                   ),
                 ),
               ],

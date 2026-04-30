@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/home/logic/product/cubit/product_cubit.dart';
 import 'package:hungry/pages/home/logic/product/cubit/product_state.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
@@ -69,9 +70,9 @@ class ProudectsSection extends StatelessWidget {
           );
         }
 
-        return const SizedBox(
+        return SizedBox(
           height: 292,
-          child: Center(child: Text('Loading products...')),
+          child: Center(child: Text(context.tr('Loading products...'))),
         );
       },
     );
@@ -117,9 +118,9 @@ class _ProductsList extends StatelessWidget {
         : filteredProducts.take(maxItems!).toList();
 
     if (displayedProducts.isEmpty) {
-      return const SizedBox(
+      return SizedBox(
         height: 292,
-        child: Center(child: Text('No products found')),
+        child: Center(child: Text(context.tr('No products found'))),
       );
     }
 
@@ -136,7 +137,7 @@ class _ProductsList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      context.tr(title),
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -146,7 +147,7 @@ class _ProductsList extends StatelessWidget {
                     if (subtitle != null) ...[
                       const SizedBox(height: 6),
                       Text(
-                        subtitle!,
+                        context.tr(subtitle!),
                         style: const TextStyle(
                           fontSize: 13,
                           color: AppColors.hintColor,
@@ -177,9 +178,9 @@ class _ProductsList extends StatelessWidget {
                   minimumSize: const Size(0, 0),
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
-                  'See all',
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                child: Text(
+                  context.tr('See all'),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ],

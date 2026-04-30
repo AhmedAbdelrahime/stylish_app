@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/shared/custom_text.dart';
 
 class PaySection extends StatelessWidget {
@@ -30,14 +32,6 @@ class PaySection extends StatelessWidget {
   final String? couponMessage;
   final String? appliedCouponCode;
 
-  String _price(double value) {
-    if (value == value.roundToDouble()) {
-      return value.toStringAsFixed(0);
-    }
-
-    return value.toStringAsFixed(2);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -54,7 +48,7 @@ class PaySection extends StatelessWidget {
               Row(
                 children: [
                   SvgPicture.asset(
-                    'assets/svgs/coupon.svg',
+                    StoreAssets.couponIcon,
                     width: 20,
                     height: 20,
                     colorFilter: const ColorFilter.mode(
@@ -90,7 +84,7 @@ class PaySection extends StatelessWidget {
                       controller: couponController,
                       textCapitalization: TextCapitalization.characters,
                       decoration: InputDecoration(
-                        hintText: 'Enter coupon code',
+                        hintText: context.tr('Enter coupon code'),
                         filled: true,
                         fillColor: AppColors.primaryColor,
                         contentPadding: const EdgeInsets.symmetric(
@@ -131,9 +125,11 @@ class PaySection extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text(
-                              'Apply',
-                              style: TextStyle(fontWeight: FontWeight.w700),
+                          : Text(
+                              context.tr('Apply'),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                     ),
                   ),
@@ -144,7 +140,7 @@ class PaySection extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    couponMessage!,
+                    context.tr(couponMessage!),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -172,7 +168,7 @@ class PaySection extends StatelessWidget {
             CustomText(text: 'Order Amount', size: 16, weight: FontWeight.w400),
             const Spacer(),
             CustomText(
-              text: '\u20B9${_price(subtotal)}',
+              text: AppPrice.format(subtotal),
               size: 15,
               weight: FontWeight.w500,
               color: AppColors.blackColor,
@@ -185,7 +181,7 @@ class PaySection extends StatelessWidget {
             CustomText(text: 'Delivery Fee', size: 16, weight: FontWeight.w400),
             const Spacer(),
             CustomText(
-              text: '\u20B9${_price(shippingFee)}',
+              text: AppPrice.format(shippingFee),
               size: 14,
               weight: FontWeight.w500,
               color: AppColors.blackColor,
@@ -199,7 +195,7 @@ class PaySection extends StatelessWidget {
               CustomText(text: 'Discount', size: 16, weight: FontWeight.w400),
               const Spacer(),
               CustomText(
-                text: '- \u20B9${_price(discountAmount)}',
+                text: AppPrice.discount(discountAmount),
                 size: 14,
                 weight: FontWeight.w600,
                 color: AppColors.redColor,
@@ -214,7 +210,7 @@ class PaySection extends StatelessWidget {
             CustomText(text: 'Order Total', size: 18, weight: FontWeight.w400),
             const Spacer(),
             CustomText(
-              text: '\u20B9${_price(total)}',
+              text: AppPrice.format(total),
               size: 18,
               weight: FontWeight.w700,
               color: AppColors.blackColor,

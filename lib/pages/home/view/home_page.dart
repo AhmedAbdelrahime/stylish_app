@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/home/data/category_service.dart';
 import 'package:hungry/pages/home/data/offer_service.dart';
 import 'package:hungry/pages/home/data/product_service.dart';
@@ -110,7 +111,7 @@ class _HomeSectionHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
+            context.tr(title),
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w700,
@@ -119,7 +120,7 @@ class _HomeSectionHeader extends StatelessWidget {
           ),
           const Gap(4),
           Text(
-            subtitle,
+            context.tr(subtitle),
             style: const TextStyle(
               fontSize: 13,
               color: AppColors.hintColor,
@@ -168,7 +169,9 @@ class _CategoryProductSections extends StatelessWidget {
                 for (final section in sections) ...[
                   ProudectsSection(
                     title: section.$1,
-                    subtitle: 'More products selected from this category.',
+                    subtitle: context.tr(
+                      'More products selected from this category.',
+                    ),
                     products: section.$2,
                     maxItems: 8,
                     mode: ProductSectionMode.highestRated,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:gap/gap.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/product/data/review_service.dart';
 import 'package:hungry/pages/product/model/review_model.dart';
 
@@ -57,7 +58,7 @@ class _ReviewSectionState extends State<ReviewSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Customer Reviews',
+                context.tr('Customer Reviews'),
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.w700,
@@ -66,7 +67,9 @@ class _ReviewSectionState extends State<ReviewSection> {
               ),
               const SizedBox(height: 4),
               Text(
-                '${reviews.length} recent comments from real shoppers.',
+                context.tr('{count} recent comments from real shoppers.', {
+                  'count': reviews.length,
+                }),
                 style: const TextStyle(
                   fontSize: 13,
                   color: AppColors.hintColor,
@@ -93,26 +96,11 @@ class _ReviewCard extends StatelessWidget {
 
   final ReviewModel review;
 
-  String get _formattedDate {
+  String _formattedDate(BuildContext context) {
     final date = review.createdAt;
-    if (date == null) return 'Recent review';
+    if (date == null) return context.tr('Recent review');
 
-    final monthNames = const [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-
-    return '${monthNames[date.month - 1]} ${date.day}, ${date.year}';
+    return MaterialLocalizations.of(context).formatMediumDate(date);
   }
 
   @override
@@ -169,7 +157,7 @@ class _ReviewCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      _formattedDate,
+                      _formattedDate(context),
                       style: const TextStyle(
                         fontSize: 11,
                         color: AppColors.hintColor,

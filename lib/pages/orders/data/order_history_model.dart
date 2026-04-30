@@ -1,3 +1,5 @@
+import 'package:hungry/core/config/store_config.dart';
+
 class OrderHistoryItem {
   const OrderHistoryItem({
     required this.id,
@@ -19,7 +21,7 @@ class OrderHistoryItem {
   final String? productImageUrl;
   final double unitPrice;
   final int quantity;
-  final int? selectedSize;
+  final String? selectedSize;
 
   factory OrderHistoryItem.fromJson(Map<String, dynamic> json) {
     return OrderHistoryItem(
@@ -31,11 +33,16 @@ class OrderHistoryItem {
       productImageUrl: json['product_image_url']?.toString(),
       unitPrice: (json['unit_price'] as num?)?.toDouble() ?? 0,
       quantity: (json['quantity'] as num?)?.toInt() ?? 1,
-      selectedSize: (json['selected_size'] as num?)?.toInt(),
+      selectedSize: _parseSelectedSize(json['selected_size']),
     );
   }
 
   double get lineTotal => unitPrice * quantity;
+
+  static String? _parseSelectedSize(Object? value) {
+    final normalized = value?.toString().trim();
+    return normalized == null || normalized.isEmpty ? null : normalized;
+  }
 
   String get displayTitle {
     final title = productTitle?.trim();
@@ -98,7 +105,7 @@ class OrderHistoryModel {
       shippingFee: (json['shipping_fee'] as num?)?.toDouble() ?? 0,
       discountAmount: (json['discount_amount'] as num?)?.toDouble() ?? 0,
       totalAmount: (json['total_amount'] as num?)?.toDouble() ?? 0,
-      currency: (json['currency'] ?? 'INR').toString(),
+      currency: (json['currency'] ?? StoreConfig.currencyCode).toString(),
       shippingAddress: json['shipping_address']?.toString(),
       notes: json['notes']?.toString(),
       createdAt:
@@ -139,7 +146,17 @@ class OrderHistoryModel {
 
   String get deliveryLabel => _titleCase(deliveryStatus);
 
-  String get paymentLabel => _titleCase(paymentStatus);
+  bool get isCashOnDelivery {
+    final normalized = notes?.toLowerCase() ?? '';
+    return normalized.contains(
+          StorePayment.cashOnDeliveryLabel.toLowerCase(),
+        ) ||
+        normalized.contains('cash on delivery');
+  }
+
+  String get paymentLabel => isCashOnDelivery
+      ? StorePayment.cashOnDeliveryLabel
+      : _titleCase(paymentStatus);
 
   String get statusLabel => _titleCase(status);
 

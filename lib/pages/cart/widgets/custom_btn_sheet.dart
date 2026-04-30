@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/pages/cart/widgets/cart_btn.dart';
 import 'package:hungry/shared/custom_text.dart';
 
@@ -13,14 +14,6 @@ class CustomBtnSheet extends StatelessWidget {
   final double total;
   final double discountAmount;
   final VoidCallback onProceed;
-
-  String get _formattedTotal {
-    if (total == total.roundToDouble()) {
-      return total.toStringAsFixed(0);
-    }
-
-    return total.toStringAsFixed(2);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +42,7 @@ class CustomBtnSheet extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 CustomText(
-                  text: '\u20B9$_formattedTotal',
+                  text: AppPrice.format(total),
                   color: Colors.black,
                   weight: FontWeight.bold,
                   size: 24,

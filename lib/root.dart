@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/cart/data/cart_service.dart';
 import 'package:hungry/pages/cart/view/cart_page.dart';
 import 'package:hungry/pages/home/view/home_page.dart';
@@ -69,45 +70,59 @@ class _RootState extends State<Root> {
       // backgroundColor: Colors.white,
       body: screens[currentpage],
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
         decoration: BoxDecoration(
-          color: AppColors.primaryColor,
+          color: Colors.white,
           boxShadow: [
-            // ignore: deprecated_member_use
-            BoxShadow(blurRadius: 20, color: Colors.black.withOpacity(.1)),
+            BoxShadow(
+              blurRadius: 24,
+              offset: const Offset(0, -8),
+              color: Colors.black.withValues(alpha: 0.08),
+            ),
           ],
         ),
-        child: GNav(
-          gap: 8,
-          activeColor: Colors.white,
-          iconSize: 24,
-          padding: EdgeInsetsGeometry.symmetric(horizontal: 20, vertical: 12),
-          duration: const Duration(milliseconds: 600),
-          // ignore: deprecated_member_use
-          tabBackgroundColor: AppColors.redColor.withOpacity(.8),
-          color: Colors.grey,
-          selectedIndex: currentpage,
-          onTabChange: (value) {
-            setState(() {
-              currentpage = value;
-            });
-          },
+        child: SafeArea(
+          top: false,
+          child: GNav(
+            gap: 8,
+            haptic: true,
+            curve: Curves.easeOutCubic,
+            tabBorderRadius: 18,
+            activeColor: Colors.white,
+            iconSize: 23,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            duration: const Duration(milliseconds: 350),
+            tabBackgroundColor: AppColors.redColor,
+            color: AppColors.hintColor,
+            selectedIndex: currentpage,
+            onTabChange: (value) {
+              setState(() {
+                currentpage = value;
+              });
+            },
 
-          tabs: [
-            const GButton(icon: Icons.home_outlined, text: 'Home'),
-            GButton(
-              icon: Icons.shopping_cart_outlined,
-              text: 'Cart',
-              leading: ValueListenableBuilder<int>(
-                valueListenable: CartService.itemCountNotifier,
-                builder: (context, count, _) {
-                  return _CartTabIcon(count: count, isActive: currentpage == 1);
-                },
+            tabs: [
+              GButton(icon: Icons.home_rounded, text: context.tr('Home')),
+              GButton(
+                icon: Icons.shopping_bag_outlined,
+                text: context.tr('Cart'),
+                leading: ValueListenableBuilder<int>(
+                  valueListenable: CartService.itemCountNotifier,
+                  builder: (context, count, _) {
+                    return _CartTabIcon(
+                      count: count,
+                      isActive: currentpage == 1,
+                    );
+                  },
+                ),
               ),
-            ),
-            const GButton(icon: Icons.search, text: 'Search'),
-            const GButton(icon: Icons.settings_outlined, text: 'Settings'),
-          ],
+              GButton(icon: Icons.search_rounded, text: context.tr('Search')),
+              GButton(
+                icon: Icons.person_outline_rounded,
+                text: context.tr('Account'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -126,7 +141,7 @@ class _CartTabIcon extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Icon(
-          Icons.shopping_cart_outlined,
+          Icons.shopping_bag_outlined,
           color: isActive ? Colors.white : Colors.grey,
           size: 24,
         ),

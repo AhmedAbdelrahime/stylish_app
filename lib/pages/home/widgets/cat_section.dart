@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/home/logic/category/cubit/category_cubit.dart';
 import 'package:hungry/pages/home/logic/category/cubit/category_state.dart';
 import 'package:hungry/pages/search/view/search_page.dart';
@@ -48,9 +49,9 @@ class CatSection extends StatelessWidget {
 
         if (state is CategoryLoaded) {
           if (state.categories.isEmpty) {
-            return const SizedBox(
+            return SizedBox(
               height: 110,
-              child: Center(child: Text('No categories found')),
+              child: Center(child: Text(context.tr('No categories found'))),
             );
           }
 
@@ -120,9 +121,9 @@ class CatSection extends StatelessWidget {
           );
         }
 
-        return const SizedBox(
+        return SizedBox(
           height: 110,
-          child: Center(child: Text('Loading categories...')),
+          child: Center(child: Text(context.tr('Loading categories...'))),
         );
       },
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
 import 'package:hungry/pages/home/widgets/card_item.dart';
 
@@ -29,7 +30,7 @@ class SectionProductsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              title,
+              context.tr(title),
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
@@ -38,7 +39,7 @@ class SectionProductsPage extends StatelessWidget {
             ),
             if (subtitle != null)
               Text(
-                subtitle!,
+                context.tr(subtitle!),
                 style: const TextStyle(
                   fontSize: 12,
                   color: AppColors.hintColor,
@@ -48,7 +49,7 @@ class SectionProductsPage extends StatelessWidget {
         ),
       ),
       body: products.isEmpty
-          ? const Center(child: Text('No products found'))
+          ? Center(child: Text(context.tr('No products found')))
           : GridView.builder(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
               itemCount: products.length,

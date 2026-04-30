@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/pages/home/logic/favorites/favorites_controller.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
@@ -16,16 +17,6 @@ class CardItem extends StatelessWidget {
   final List<ProductModel> relatedProducts;
   final EdgeInsetsGeometry margin;
   static final FavoritesController _favorites = FavoritesController.instance;
-
-  String get _formattedPrice {
-    final price = product.effectivePrice;
-
-    if (price == price.roundToDouble()) {
-      return price.toStringAsFixed(0);
-    }
-
-    return price.toStringAsFixed(2);
-  }
 
   List<_ProductBadgeData> get _badges {
     final badges = <_ProductBadgeData>[];
@@ -201,7 +192,7 @@ class CardItem extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          '\u20B9$_formattedPrice',
+                          AppPrice.format(product.effectivePrice),
                           style: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
@@ -211,7 +202,7 @@ class CardItem extends StatelessWidget {
                         if (product.hasSale) ...[
                           const SizedBox(height: 3),
                           Text(
-                            '\u20B9${product.price.toStringAsFixed(product.price == product.price.roundToDouble() ? 0 : 2)}',
+                            AppPrice.format(product.price),
                             style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,

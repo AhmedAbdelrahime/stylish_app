@@ -4,6 +4,7 @@ class UserModel {
   final String? name;
   final String? image;
   final String? address;
+  final String? phone;
   final String? city;
   final String? state;
   final String? country;
@@ -16,6 +17,7 @@ class UserModel {
     this.name,
     this.image,
     this.address,
+    this.phone,
     this.city,
     this.state,
     this.country,
@@ -37,6 +39,7 @@ class UserModel {
       name: json['full_name'],
       image: json['image'],
       address: json['address'],
+      phone: json['phone'],
       city: json['city'],
       state: json['state'],
       country: json['country'],
@@ -49,11 +52,38 @@ class UserModel {
     return {
       'full_name': name,
       'address': address,
+      'phone': phone,
       'city': city,
       'state': state,
       'country': country,
       'pincode': pincode,
       'image': image,
     };
+  }
+
+  UserModel copyWith({
+    String? name,
+    String? image,
+    String? address,
+    String? phone,
+    String? city,
+    String? state,
+    String? country,
+    String? pincode,
+    String? role,
+  }) {
+    return UserModel(
+      userId: userId,
+      email: email,
+      name: name ?? this.name,
+      image: image ?? this.image,
+      address: address ?? this.address,
+      phone: phone ?? this.phone,
+      city: city ?? this.city,
+      state: state ?? this.state,
+      country: country ?? this.country,
+      pincode: pincode ?? this.pincode,
+      role: role ?? this.role,
+    );
   }
 }

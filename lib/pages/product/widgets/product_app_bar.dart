@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
 import 'package:hungry/shared/custom_text.dart';
 
@@ -61,7 +62,7 @@ class ProductAppBar extends StatelessWidget {
               onTap: logout,
               child: Row(
                 children: [
-                  SvgPicture.asset('assets/svgs/logout.svg'),
+                  SvgPicture.asset(StoreAssets.logoutIcon),
                   const Gap(5),
                   CustomText(text: 'Logout', size: 16, weight: FontWeight.w400),
                 ],

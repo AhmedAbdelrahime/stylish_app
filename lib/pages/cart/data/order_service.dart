@@ -1,5 +1,6 @@
-﻿import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/pages/cart/data/cart_item_model.dart';
 import 'package:hungry/pages/cart/data/coupon_service.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
@@ -16,8 +17,9 @@ class OrderService {
   Future<String> createSingleItemOrder({
     required ProductModel product,
     required int quantity,
-    int? selectedSize,
+    String? selectedSize,
     AppliedCoupon? coupon,
+    String? notes,
   }) async {
     final user = _supabase.auth.currentUser;
     if (user == null) {
@@ -26,12 +28,19 @@ class OrderService {
 
     final unitPrice = product.effectivePrice;
     final subtotal = unitPrice * quantity;
-    const shippingFee = 30.0;
+    const shippingFee = StoreConfig.standardDeliveryFee;
     final discountAmount = coupon?.discountAmount ?? 0.0;
     final totalAmount = subtotal + shippingFee - discountAmount;
 
     final profile = await _profileService.getProfile();
     final shippingAddress = _composeShippingAddress(profile);
+    final contactPhone = _composeContactPhone(profile);
+    final orderNotes = _composeOrderNotes(
+      coupon: coupon,
+      contactPhone: contactPhone,
+      notes: notes,
+    );
+
     final orderId = await _createOrderWithItems(
       orderPayload: {
         'status': 'pending',
@@ -41,9 +50,9 @@ class OrderService {
         'shipping_fee': shippingFee,
         'discount_amount': discountAmount,
         'total_amount': totalAmount,
-        'currency': 'INR',
+        'currency': StoreConfig.currencyCode,
         'shipping_address': shippingAddress,
-        'notes': coupon == null ? null : 'Coupon: ${coupon.code}',
+        'notes': orderNotes,
       },
       itemPayloads: [
         {
@@ -70,7 +79,11 @@ class OrderService {
     return orderId;
   }
 
-  Future<String> createCartOrder({required List<CartItemModel> items}) async {
+  Future<String> createCartOrder({
+    required List<CartItemModel> items,
+    AppliedCoupon? coupon,
+    String? notes,
+  }) async {
     final user = _supabase.auth.currentUser;
     if (user == null) {
       throw Exception('User not logged in');
@@ -81,18 +94,13 @@ class OrderService {
     }
 
     final subtotal = items.fold<double>(0, (sum, item) => sum + item.lineTotal);
-    const shippingFee = 30.0;
-    final discountAmount = items.fold<double>(0, (sum, item) {
-      if (!item.hasDiscount || item.originalPrice == null) {
-        return sum;
-      }
-
-      return sum + ((item.originalPrice! - item.price) * item.quantity);
-    });
-    final totalAmount = subtotal + shippingFee;
+    const shippingFee = StoreConfig.standardDeliveryFee;
+    final discountAmount = coupon?.discountAmount ?? 0.0;
+    final totalAmount = subtotal + shippingFee - discountAmount;
 
     final profile = await _profileService.getProfile();
     final shippingAddress = _composeShippingAddress(profile);
+    final contactPhone = _composeContactPhone(profile);
     final orderItems = items
         .map(
           (item) => {
@@ -107,7 +115,7 @@ class OrderService {
         )
         .toList();
 
-    return _createOrderWithItems(
+    final orderId = await _createOrderWithItems(
       orderPayload: {
         'status': 'pending',
         'payment_status': 'pending',
@@ -116,11 +124,41 @@ class OrderService {
         'shipping_fee': shippingFee,
         'discount_amount': discountAmount,
         'total_amount': totalAmount,
-        'currency': 'INR',
+        'currency': StoreConfig.currencyCode,
         'shipping_address': shippingAddress,
+        'notes': _composeOrderNotes(
+          coupon: coupon,
+          contactPhone: contactPhone,
+          notes: notes,
+        ),
       },
       itemPayloads: orderItems,
     );
+
+    if (coupon != null) {
+      await _supabase.rpc(
+        'redeem_coupon_usage',
+        params: {'coupon_id_input': coupon.id},
+      );
+    }
+
+    return orderId;
+  }
+
+  String _composeOrderNotes({
+    AppliedCoupon? coupon,
+    String? contactPhone,
+    String? notes,
+  }) {
+    final parts = [
+      '${StoreOrderNoteLabels.payment}: ${StorePayment.cashOnDeliveryLabel}',
+      if (contactPhone != null && contactPhone.trim().isNotEmpty)
+        '${StoreOrderNoteLabels.phone}: ${contactPhone.trim()}',
+      if (coupon != null) '${StoreOrderNoteLabels.coupon}: ${coupon.code}',
+      if (notes != null && notes.trim().isNotEmpty) notes.trim(),
+    ];
+
+    return parts.join(' | ');
   }
 
   Future<String> _createOrderWithItems({
@@ -198,5 +236,12 @@ class OrderService {
 
     final joined = parts.join(', ');
     return joined.isEmpty ? null : joined;
+  }
+
+  String? _composeContactPhone(dynamic profile) {
+    if (profile == null) return null;
+
+    final phone = profile.phone?.toString().trim();
+    return phone == null || phone.isEmpty ? null : phone;
   }
 }

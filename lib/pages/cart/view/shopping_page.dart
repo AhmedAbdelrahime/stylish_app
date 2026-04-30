@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/cart/data/coupon_service.dart';
 import 'package:hungry/pages/cart/view/chekout.dart';
 import 'package:hungry/pages/cart/widgets/custom_btn_sheet.dart';
@@ -17,7 +19,7 @@ class ShoppingPage extends StatefulWidget {
   });
 
   final ProductModel product;
-  final int? initialSelectedSize;
+  final String? initialSelectedSize;
 
   @override
   State<ShoppingPage> createState() => _ShoppingPageState();
@@ -26,7 +28,7 @@ class ShoppingPage extends StatefulWidget {
 class _ShoppingPageState extends State<ShoppingPage> {
   final CouponService _couponService = CouponService();
   final TextEditingController _couponController = TextEditingController();
-  late int? _selectedSize;
+  late String? _selectedSize;
   int _selectedQty = 1;
   AppliedCoupon? _appliedCoupon;
   String? _couponMessage;
@@ -35,8 +37,8 @@ class _ShoppingPageState extends State<ShoppingPage> {
   @override
   void initState() {
     super.initState();
-    _selectedSize = widget.product.sizes.isNotEmpty
-        ? (widget.initialSelectedSize ?? widget.product.sizes.first)
+    _selectedSize = widget.product.availableSizes.isNotEmpty
+        ? (widget.initialSelectedSize ?? widget.product.availableSizes.first)
         : null;
   }
 
@@ -47,7 +49,7 @@ class _ShoppingPageState extends State<ShoppingPage> {
   }
 
   double get _subtotal => widget.product.effectivePrice * _selectedQty;
-  double get _shippingFee => 30.0;
+  double get _shippingFee => StoreConfig.standardDeliveryFee;
   double get _discountAmount => _appliedCoupon?.discountAmount ?? 0.0;
   double get _total => _subtotal + _shippingFee - _discountAmount;
 
@@ -70,14 +72,16 @@ class _ShoppingPageState extends State<ShoppingPage> {
       setState(() {
         _appliedCoupon = coupon;
         _couponController.text = coupon.code;
-        _couponMessage = coupon.description ?? 'Coupon applied successfully';
+        _couponMessage = context.tr(
+          coupon.description ?? 'Coupon applied successfully',
+        );
       });
     } catch (e) {
       if (!mounted) return;
 
       setState(() {
         _appliedCoupon = null;
-        _couponMessage = e.toString().replaceFirst('Exception: ', '');
+        _couponMessage = _couponErrorMessage(e);
       });
     } finally {
       if (mounted) {
@@ -94,6 +98,14 @@ class _ShoppingPageState extends State<ShoppingPage> {
       _couponController.clear();
       _couponMessage = null;
     });
+  }
+
+  String _couponErrorMessage(Object error) {
+    if (error is CouponException) {
+      return context.tr(error.messageKey, error.values);
+    }
+
+    return context.tr(error.toString().replaceFirst('Exception: ', ''));
   }
 
   @override

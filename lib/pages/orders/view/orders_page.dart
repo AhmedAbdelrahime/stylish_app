@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/api/supabase_error_mapper.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/orders/data/order_history_model.dart';
 import 'package:hungry/pages/orders/data/order_history_service.dart';
 import 'package:hungry/pages/orders/view/order_details_page.dart';
@@ -186,7 +188,9 @@ class _OrderCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      '${order.totalQuantity} item${order.totalQuantity == 1 ? '' : 's'}',
+                      context.tr('{count} items', {
+                        'count': order.totalQuantity,
+                      }),
                       style: const TextStyle(
                         color: AppColors.hintColor,
                         fontSize: 13,
@@ -195,7 +199,10 @@ class _OrderCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${order.currency} ${_price(order.totalAmount)}',
+                    AppPrice.format(
+                      order.totalAmount,
+                      currencyCode: order.currency,
+                    ),
                     style: const TextStyle(
                       color: AppColors.blackColor,
                       fontSize: 15,
@@ -276,7 +283,7 @@ class _StatusPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
-        text,
+        context.tr(text),
         style: TextStyle(
           color: color,
           fontSize: 12,
@@ -313,7 +320,7 @@ class _StateMessage extends StatelessWidget {
             Icon(icon, size: 54, color: AppColors.redColor),
             const SizedBox(height: 14),
             Text(
-              title,
+              context.tr(title),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
@@ -323,7 +330,7 @@ class _StateMessage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              message,
+              context.tr(message),
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13,
@@ -342,7 +349,7 @@ class _StateMessage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: Text(actionText),
+              child: Text(context.tr(actionText)),
             ),
           ],
         ),
@@ -369,12 +376,4 @@ String _formatDate(DateTime value) {
   final day = value.day.toString().padLeft(2, '0');
   final month = value.month.toString().padLeft(2, '0');
   return '$day/$month/${value.year}';
-}
-
-String _price(double value) {
-  if (value == value.roundToDouble()) {
-    return value.toStringAsFixed(0);
-  }
-
-  return value.toStringAsFixed(2);
 }

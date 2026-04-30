@@ -61,7 +61,7 @@ class CartService {
   Future<int> addItem({
     required ProductModel product,
     required int quantity,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     if (!product.isInStock) {
       throw Exception('This product is currently out of stock.');
@@ -90,7 +90,7 @@ class CartService {
   Future<void> updateQuantity({
     required String productId,
     required int quantity,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     if (await _useBackendCart()) {
       await _migrateLocalCartToBackendIfNeeded();
@@ -113,7 +113,7 @@ class CartService {
 
   Future<void> removeItem({
     required String productId,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     if (await _useBackendCart()) {
       await _migrateLocalCartToBackendIfNeeded();
@@ -151,7 +151,7 @@ class CartService {
   Future<int> _addBackendItem({
     required ProductModel product,
     required int quantity,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     final user = _supabase.auth.currentUser;
     if (user == null) {
@@ -185,7 +185,7 @@ class CartService {
   Future<int> _addLocalItem({
     required ProductModel product,
     required int quantity,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final entries = await _readLocalEntries(prefs: prefs);
@@ -223,7 +223,7 @@ class CartService {
   Future<void> _updateBackendQuantity({
     required String productId,
     required int quantity,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     final existingEntry = await _readSingleBackendEntry(
       productId: productId,
@@ -262,7 +262,7 @@ class CartService {
   Future<void> _updateLocalQuantity({
     required String productId,
     required int quantity,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final entries = await _readLocalEntries(prefs: prefs);
@@ -298,7 +298,7 @@ class CartService {
 
   Future<void> _deleteBackendEntry({
     required String productId,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     PostgrestFilterBuilder<dynamic> query = _supabase
         .from('cart_items')
@@ -316,7 +316,7 @@ class CartService {
 
   Future<void> _removeLocalItem({
     required String productId,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final entries = await _readLocalEntries(prefs: prefs);
@@ -472,7 +472,7 @@ class CartService {
 
   Future<_StoredCartEntry?> _readSingleBackendEntry({
     required String productId,
-    int? selectedSize,
+    String? selectedSize,
   }) async {
     final user = _supabase.auth.currentUser;
     if (user == null) {
@@ -611,7 +611,7 @@ class _StoredCartEntry {
 
   final String productId;
   final int quantity;
-  final int? selectedSize;
+  final String? selectedSize;
   final String? rowId;
 
   factory _StoredCartEntry.fromJson(Map<String, dynamic> json) {
@@ -619,8 +619,13 @@ class _StoredCartEntry {
       rowId: json['id']?.toString(),
       productId: (json['product_id'] ?? '').toString(),
       quantity: (json['quantity'] as num?)?.toInt() ?? 1,
-      selectedSize: (json['selected_size'] as num?)?.toInt(),
+      selectedSize: _parseSelectedSize(json['selected_size']),
     );
+  }
+
+  static String? _parseSelectedSize(Object? value) {
+    final normalized = value?.toString().trim();
+    return normalized == null || normalized.isEmpty ? null : normalized;
   }
 
   _StoredCartEntry copyWith({int? quantity, String? rowId}) {

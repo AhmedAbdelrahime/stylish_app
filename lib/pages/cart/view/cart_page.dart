@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/core/constants/app_colors.dart';
+import 'package:hungry/l10n/app_localizations.dart';
 import 'package:hungry/pages/cart/data/cart_item_model.dart';
 import 'package:hungry/pages/cart/data/cart_service.dart';
 import 'package:hungry/pages/cart/view/cart_checkout_page.dart';
@@ -18,7 +20,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  static const double _shippingFee = 30.0;
+  static const double _shippingFee = StoreConfig.standardDeliveryFee;
 
   final CartService _cartService = CartService();
   final ProfileService _profileService = ProfileService();
@@ -72,14 +74,6 @@ class _CartPageState extends State<CartPage> {
     }
 
     return normalized.join(', ');
-  }
-
-  String _price(double value) {
-    if (value == value.roundToDouble()) {
-      return value.toStringAsFixed(0);
-    }
-
-    return value.toStringAsFixed(2);
   }
 
   Future<void> _loadCart({bool silent = false}) async {
@@ -143,7 +137,11 @@ class _CartPageState extends State<CartPage> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        SnackBar(
+          content: Text(
+            context.tr(e.toString().replaceFirst('Exception: ', '')),
+          ),
+        ),
       );
     } finally {
       if (mounted) {
@@ -168,7 +166,11 @@ class _CartPageState extends State<CartPage> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+        SnackBar(
+          content: Text(
+            context.tr(e.toString().replaceFirst('Exception: ', '')),
+          ),
+        ),
       );
     } finally {
       if (mounted) {
@@ -196,13 +198,15 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     final canGoBack = Navigator.of(context).canPop();
     final savingsLabel = _discountTotal > 0
-        ? '₹${_price(_discountTotal)} saved'
-        : 'No active savings';
+        ? context.tr('{amount} saved', {
+            'amount': AppPrice.format(_discountTotal),
+          })
+        : context.tr('No active savings');
     final deliveryLabel = _cartItems.isEmpty
-        ? 'Start by adding products'
+        ? context.tr('Start by adding products')
         : _shippingAddress == null
-        ? 'Add an address before checkout'
-        : 'Standard delivery available';
+        ? context.tr('Add an address before checkout')
+        : context.tr('Standard delivery available');
 
     return Scaffold(
       backgroundColor: AppColors.primaryColor,
@@ -229,7 +233,7 @@ class _CartPageState extends State<CartPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Total Payable',
+                      context.tr('Total Payable'),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -238,7 +242,7 @@ class _CartPageState extends State<CartPage> {
                     ),
                     const Gap(4),
                     Text(
-                      '₹${_price(_total)}',
+                      AppPrice.format(_total),
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
@@ -276,9 +280,12 @@ class _CartPageState extends State<CartPage> {
                       borderRadius: BorderRadius.circular(18),
                     ),
                   ),
-                  child: const Text(
-                    'Checkout',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                  child: Text(
+                    context.tr('Checkout'),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
@@ -296,7 +303,9 @@ class _CartPageState extends State<CartPage> {
             children: [
               ProductAppBar(text: 'Cart', padiing: 0, showbackicon: canGoBack),
               Text(
-                'Review saved items, update quantities, and move to checkout when everything looks right.',
+                context.tr(
+                  'Review saved items, update quantities, and move to checkout when everything looks right.',
+                ),
                 style: TextStyle(
                   fontSize: 14,
                   height: 1.5,
@@ -309,7 +318,9 @@ class _CartPageState extends State<CartPage> {
                   Expanded(
                     child: _InsightChip(
                       icon: Icons.shopping_bag_outlined,
-                      label: '$_totalItems items',
+                      label: context.tr('{count} items', {
+                        'count': _totalItems,
+                      }),
                     ),
                   ),
                   const Gap(10),
@@ -338,8 +349,8 @@ class _CartPageState extends State<CartPage> {
                         icon: Icons.home_work_outlined,
                         title: 'No address selected yet',
                         subtitle:
-                            'Add your delivery address in Settings so checkout can calculate the right destination.',
-                        buttonLabel: 'Open Settings',
+                            'Add your delivery address in Account so checkout can calculate the right destination.',
+                        buttonLabel: 'Open Account',
                         onTap: _openAddressSettings,
                       )
                     else
@@ -356,7 +367,7 @@ class _CartPageState extends State<CartPage> {
                             Text(
                               (_profile?.name?.trim().isNotEmpty ?? false)
                                   ? _profile!.name!.trim()
-                                  : 'Delivery destination',
+                                  : context.tr('Delivery destination'),
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w700,
@@ -420,8 +431,13 @@ class _CartPageState extends State<CartPage> {
                           Expanded(
                             child: Text(
                               _cartItems.isEmpty
-                                  ? 'Add products to see a live order summary here.'
-                                  : 'Shipping is ₹${_price(_shippingFee)} for this order. Item pricing and discounts are pulled from your real product data.',
+                                  ? context.tr(
+                                      'Add products to see a live order summary here.',
+                                    )
+                                  : context.tr(
+                                      'Shipping is {fee} for this order. Item pricing and discounts are pulled from your real product data.',
+                                      {'fee': AppPrice.format(_shippingFee)},
+                                    ),
                               style: TextStyle(
                                 fontSize: 13,
                                 height: 1.5,
@@ -439,9 +455,9 @@ class _CartPageState extends State<CartPage> {
               const Gap(18),
               Row(
                 children: [
-                  const Text(
-                    'Bag Items',
-                    style: TextStyle(
+                  Text(
+                    context.tr('Bag Items'),
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                       color: AppColors.blackColor,
@@ -449,7 +465,9 @@ class _CartPageState extends State<CartPage> {
                   ),
                   const Spacer(),
                   Text(
-                    '${_cartItems.length} products',
+                    context.tr('{count} products', {
+                      'count': _cartItems.length,
+                    }),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
@@ -512,19 +530,19 @@ class _CartPageState extends State<CartPage> {
                     const Gap(16),
                     _SummaryRow(
                       label: 'Subtotal',
-                      value: '₹${_price(_subtotal)}',
+                      value: AppPrice.format(_subtotal),
                     ),
                     const Gap(12),
                     _SummaryRow(
                       label: 'Shipping',
                       value: _cartItems.isEmpty
-                          ? '₹0'
-                          : '₹${_price(_shippingFee)}',
+                          ? AppPrice.format(0)
+                          : AppPrice.format(_shippingFee),
                     ),
                     const Gap(12),
                     _SummaryRow(
                       label: 'Savings',
-                      value: '- ₹${_price(_discountTotal)}',
+                      value: AppPrice.discount(_discountTotal),
                       valueColor: Colors.green.shade700,
                     ),
                     const Gap(16),
@@ -532,7 +550,7 @@ class _CartPageState extends State<CartPage> {
                     const Gap(16),
                     _SummaryRow(
                       label: 'Total',
-                      value: '₹${_price(_total)}',
+                      value: AppPrice.format(_total),
                       isStrong: true,
                     ),
                   ],
@@ -630,7 +648,7 @@ class _SectionHeader extends StatelessWidget {
         const Gap(10),
         Expanded(
           child: Text(
-            title,
+            context.tr(title),
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -642,7 +660,7 @@ class _SectionHeader extends StatelessWidget {
           TextButton(
             onPressed: onTap,
             child: Text(
-              actionLabel!,
+              context.tr(actionLabel!),
               style: const TextStyle(
                 fontWeight: FontWeight.w700,
                 color: AppColors.redColor,
@@ -678,7 +696,7 @@ class _SummaryRow extends StatelessWidget {
     return Row(
       children: [
         Text(
-          label,
+          context.tr(label),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -722,7 +740,7 @@ class _EmptyStateBlock extends StatelessWidget {
         ),
         const Gap(14),
         Text(
-          title,
+          context.tr(title),
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 18,
@@ -732,7 +750,7 @@ class _EmptyStateBlock extends StatelessWidget {
         ),
         const Gap(8),
         Text(
-          subtitle,
+          context.tr(subtitle),
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
@@ -753,7 +771,7 @@ class _EmptyStateBlock extends StatelessWidget {
               ),
             ),
             child: Text(
-              buttonLabel!,
+              context.tr(buttonLabel!),
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
           ),

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthService {
@@ -19,6 +19,11 @@ class AuthService {
       );
 
       final user = response.user;
+      final session = response.session;
+
+      if (session == null) {
+        throw 'EMAIL_CONFIRMATION_REQUIRED_FOR_THIS_ACCOUNT';
+      }
 
       if (kDebugMode) {
         debugPrint('User created: $user');

@@ -16,6 +16,7 @@ create table if not exists public.profiles (
   full_name text null,
   image text null,
   address text null,
+  phone text null,
   city text null,
   state text null,
   country text null,

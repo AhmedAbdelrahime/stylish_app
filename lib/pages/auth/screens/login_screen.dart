@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -108,8 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    emailControler.text = 'ahmed@123.com';
-    passControler.text = '123456789';
+    super.initState();
     _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((
       data,
     ) {
@@ -126,7 +125,6 @@ class _LoginScreenState extends State<LoginScreen> {
         (route) => false,
       );
     });
-    super.initState();
   }
 
   @override
