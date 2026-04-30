@@ -76,13 +76,19 @@ class ProductModel {
   double get effectivePrice => hasSale ? salePrice! : price;
 
   bool get isLowStock =>
-      stockQuantity > 0 && stockQuantity <= lowStockThreshold;
+      StoreConfig.enforceStockQuantity &&
+      stockQuantity > 0 &&
+      stockQuantity <= lowStockThreshold;
 
-  bool get isInStock => stockQuantity > 0;
+  bool get isInStock => !StoreConfig.enforceStockQuantity || stockQuantity > 0;
 
   List<String> get availableSizes {
     if (sizes.isNotEmpty) {
       return sizes;
+    }
+
+    if (!StoreConfig.useFallbackSizesWhenProductSizesMissing) {
+      return const [];
     }
 
     return StoreSizes.defaultsForProduct(name: name, title: title);

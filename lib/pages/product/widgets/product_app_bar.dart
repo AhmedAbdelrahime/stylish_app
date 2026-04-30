@@ -38,7 +38,10 @@ class ProductAppBar extends StatelessWidget {
           GestureDetector(
             onTap: showbackicon == true
                 ? () {
-                    Navigator.maybePop(context);
+                    final navigator = Navigator.of(context);
+                    if (navigator.canPop()) {
+                      navigator.pop();
+                    }
                   }
                 : null,
             child: showbackicon == true

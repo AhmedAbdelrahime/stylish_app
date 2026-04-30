@@ -22,6 +22,13 @@ class StoreConfig {
   static const currencyCode = 'EGP';
   static const currencySymbol = 'EGP';
   static const budgetFilterAmount = 500.0;
+
+  // Keep false for stores that do not maintain exact inventory in Supabase.
+  static const enforceStockQuantity = false;
+
+  // Turn on only after the Supabase fashion migration is applied, or after
+  // every product has sizes saved in the database.
+  static const useFallbackSizesWhenProductSizesMissing = false;
 }
 
 class StoreAssets {

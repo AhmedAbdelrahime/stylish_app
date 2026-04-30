@@ -115,7 +115,9 @@ class _CartPageState extends State<CartPage> {
   Future<void> _openAddressSettings() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const SettingsPage()),
+      MaterialPageRoute(
+        builder: (_) => const SettingsPage(showBackButton: true),
+      ),
     );
 
     if (!mounted) return;

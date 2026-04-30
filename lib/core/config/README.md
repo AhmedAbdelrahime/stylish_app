@@ -4,7 +4,8 @@ Edit `store_config.dart` when reusing this app for another store.
 
 Main sections:
 
-- `StoreConfig`: brand, country, delivery fee, currency, catalog scope.
+- `StoreConfig`: brand, country, delivery fee, currency, catalog scope,
+  stock behavior, and default-size behavior.
 - `StoreAssets`: logo, app icon, onboarding images, common SVG/image assets.
 - `StoreContact`: WhatsApp number, support phone, support email, support messages.
 - `StoreLocation`: default map center and sample address.

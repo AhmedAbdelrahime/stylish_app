@@ -24,8 +24,13 @@ class ShppingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canIncrease = item.isInStock && item.quantity < item.stockQuantity;
-    final stockLabel = !item.isInStock
+    final canIncrease =
+        item.isInStock &&
+        (!StoreConfig.enforceStockQuantity ||
+            item.quantity < item.stockQuantity);
+    final stockLabel = !StoreConfig.enforceStockQuantity
+        ? context.tr('In stock')
+        : !item.isInStock
         ? context.tr('Out of stock')
         : item.isLowStock
         ? context.tr('Only {count} left', {'count': item.stockQuantity})

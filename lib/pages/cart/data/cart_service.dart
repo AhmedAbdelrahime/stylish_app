@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/pages/cart/data/cart_item_model.dart';
 import 'package:hungry/pages/home/data/product_service.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
@@ -19,6 +20,7 @@ class CartService {
   final SupabaseClient _supabase;
 
   bool? _backendAvailable;
+  bool _legacyNumericSelectedSizeBackend = false;
 
   Future<List<CartItemModel>> getCartItems() async {
     if (await _useBackendCart()) {
@@ -153,33 +155,35 @@ class CartService {
     required int quantity,
     String? selectedSize,
   }) async {
-    final user = _supabase.auth.currentUser;
-    if (user == null) {
-      throw Exception('User not logged in');
-    }
+    return _withSelectedSizeBackendCompatibility(() async {
+      final user = _supabase.auth.currentUser;
+      if (user == null) {
+        throw Exception('User not logged in');
+      }
 
-    final existingEntry = await _readSingleBackendEntry(
-      productId: product.id,
-      selectedSize: selectedSize,
-    );
+      final existingEntry = await _readSingleBackendEntry(
+        productId: product.id,
+        selectedSize: selectedSize,
+      );
 
-    final mergedQuantity = _normalizeQuantity(
-      requestedQuantity: (existingEntry?.quantity ?? 0) + quantity,
-      product: product,
-    );
+      final mergedQuantity = _normalizeQuantity(
+        requestedQuantity: (existingEntry?.quantity ?? 0) + quantity,
+        product: product,
+      );
 
-    if (existingEntry == null) {
-      await _supabase.from('cart_items').insert({
-        'user_id': user.id,
-        'product_id': product.id,
-        'selected_size': selectedSize,
-        'quantity': mergedQuantity,
-      });
-    } else {
-      await _updateBackendRowQuantity(existingEntry.rowId!, mergedQuantity);
-    }
+      if (existingEntry == null) {
+        await _supabase.from('cart_items').insert({
+          'user_id': user.id,
+          'product_id': product.id,
+          'selected_size': _selectedSizeForBackend(selectedSize),
+          'quantity': mergedQuantity,
+        });
+      } else {
+        await _updateBackendRowQuantity(existingEntry.rowId!, mergedQuantity);
+      }
 
-    return mergedQuantity;
+      return mergedQuantity;
+    });
   }
 
   Future<int> _addLocalItem({
@@ -225,38 +229,40 @@ class CartService {
     required int quantity,
     String? selectedSize,
   }) async {
-    final existingEntry = await _readSingleBackendEntry(
-      productId: productId,
-      selectedSize: selectedSize,
-    );
-    if (existingEntry == null) {
-      return;
-    }
-
-    if (quantity <= 0) {
-      await _updateBackendRowQuantity(
-        existingEntry.rowId!,
-        0,
-        deleteWhenZero: true,
+    return _withSelectedSizeBackendCompatibility(() async {
+      final existingEntry = await _readSingleBackendEntry(
+        productId: productId,
+        selectedSize: selectedSize,
       );
-      return;
-    }
+      if (existingEntry == null) {
+        return;
+      }
 
-    final product = await _getProductById(productId);
-    if (product == null || !product.isInStock) {
-      await _updateBackendRowQuantity(
-        existingEntry.rowId!,
-        0,
-        deleteWhenZero: true,
+      if (quantity <= 0) {
+        await _updateBackendRowQuantity(
+          existingEntry.rowId!,
+          0,
+          deleteWhenZero: true,
+        );
+        return;
+      }
+
+      final product = await _getProductById(productId);
+      if (product == null || !product.isInStock) {
+        await _updateBackendRowQuantity(
+          existingEntry.rowId!,
+          0,
+          deleteWhenZero: true,
+        );
+        return;
+      }
+
+      final normalizedQuantity = _normalizeQuantity(
+        requestedQuantity: quantity,
+        product: product,
       );
-      return;
-    }
-
-    final normalizedQuantity = _normalizeQuantity(
-      requestedQuantity: quantity,
-      product: product,
-    );
-    await _updateBackendRowQuantity(existingEntry.rowId!, normalizedQuantity);
+      await _updateBackendRowQuantity(existingEntry.rowId!, normalizedQuantity);
+    });
   }
 
   Future<void> _updateLocalQuantity({
@@ -300,18 +306,21 @@ class CartService {
     required String productId,
     String? selectedSize,
   }) async {
-    PostgrestFilterBuilder<dynamic> query = _supabase
-        .from('cart_items')
-        .delete()
-        .eq('product_id', productId);
+    return _withSelectedSizeBackendCompatibility(() async {
+      PostgrestFilterBuilder<dynamic> query = _supabase
+          .from('cart_items')
+          .delete()
+          .eq('product_id', productId);
 
-    if (selectedSize == null) {
-      query = query.isFilter('selected_size', null);
-    } else {
-      query = query.eq('selected_size', selectedSize);
-    }
+      final backendSelectedSize = _selectedSizeForBackend(selectedSize);
+      if (backendSelectedSize == null) {
+        query = query.isFilter('selected_size', null);
+      } else {
+        query = query.eq('selected_size', backendSelectedSize);
+      }
 
-    await query;
+      await query;
+    });
   }
 
   Future<void> _removeLocalItem({
@@ -388,6 +397,11 @@ class CartService {
     final safeRequestedQuantity = requestedQuantity <= 0
         ? 1
         : requestedQuantity;
+
+    if (!StoreConfig.enforceStockQuantity) {
+      return safeRequestedQuantity;
+    }
+
     final maxQuantity = product.stockQuantity <= 0 ? 1 : product.stockQuantity;
     return safeRequestedQuantity.clamp(1, maxQuantity).toInt();
   }
@@ -417,35 +431,37 @@ class CartService {
   }
 
   Future<void> _migrateLocalCartToBackendIfNeeded() async {
-    final localEntries = await _readLocalEntries();
-    if (localEntries.isEmpty) {
-      return;
-    }
-
-    final user = _supabase.auth.currentUser;
-    if (user == null) {
-      return;
-    }
-
-    for (final entry in localEntries) {
-      final existingEntry = await _readSingleBackendEntry(
-        productId: entry.productId,
-        selectedSize: entry.selectedSize,
-      );
-
-      if (existingEntry == null) {
-        await _supabase.from('cart_items').insert({
-          'user_id': user.id,
-          'product_id': entry.productId,
-          'selected_size': entry.selectedSize,
-          'quantity': entry.quantity,
-        });
-      } else if (entry.quantity > existingEntry.quantity) {
-        await _updateBackendRowQuantity(existingEntry.rowId!, entry.quantity);
+    return _withSelectedSizeBackendCompatibility(() async {
+      final localEntries = await _readLocalEntries();
+      if (localEntries.isEmpty) {
+        return;
       }
-    }
 
-    await _clearLocalCart();
+      final user = _supabase.auth.currentUser;
+      if (user == null) {
+        return;
+      }
+
+      for (final entry in localEntries) {
+        final existingEntry = await _readSingleBackendEntry(
+          productId: entry.productId,
+          selectedSize: entry.selectedSize,
+        );
+
+        if (existingEntry == null) {
+          await _supabase.from('cart_items').insert({
+            'user_id': user.id,
+            'product_id': entry.productId,
+            'selected_size': _selectedSizeForBackend(entry.selectedSize),
+            'quantity': entry.quantity,
+          });
+        } else if (entry.quantity > existingEntry.quantity) {
+          await _updateBackendRowQuantity(existingEntry.rowId!, entry.quantity);
+        }
+      }
+
+      await _clearLocalCart();
+    });
   }
 
   Future<List<_StoredCartEntry>> _readBackendEntries() async {
@@ -485,10 +501,11 @@ class CartService {
         .eq('user_id', user.id)
         .eq('product_id', productId);
 
-    if (selectedSize == null) {
+    final backendSelectedSize = _selectedSizeForBackend(selectedSize);
+    if (backendSelectedSize == null) {
       query = query.isFilter('selected_size', null);
     } else {
-      query = query.eq('selected_size', selectedSize);
+      query = query.eq('selected_size', backendSelectedSize);
     }
 
     final data = await query.maybeSingle();
@@ -502,29 +519,42 @@ class CartService {
   }
 
   Future<void> _replaceBackendEntries(List<_StoredCartEntry> entries) async {
-    final user = _supabase.auth.currentUser;
-    if (user == null) {
-      return;
-    }
+    return _withSelectedSizeBackendCompatibility(() async {
+      final user = _supabase.auth.currentUser;
+      if (user == null) {
+        return;
+      }
 
-    await _supabase.from('cart_items').delete().eq('user_id', user.id);
+      await _supabase.from('cart_items').delete().eq('user_id', user.id);
 
-    if (entries.isEmpty) {
-      return;
-    }
+      if (entries.isEmpty) {
+        return;
+      }
 
-    final payload = entries
-        .map(
-          (entry) => {
+      final payloadByKey = <String, Map<String, dynamic>>{};
+      for (final entry in entries) {
+        final backendSelectedSize = _selectedSizeForBackend(entry.selectedSize);
+        final key = '${entry.productId}::${backendSelectedSize ?? 'default'}';
+        final existingPayload = payloadByKey[key];
+
+        if (existingPayload == null) {
+          payloadByKey[key] = {
             'user_id': user.id,
             'product_id': entry.productId,
-            'selected_size': entry.selectedSize,
+            'selected_size': backendSelectedSize,
             'quantity': entry.quantity,
-          },
-        )
-        .toList();
+          };
+          continue;
+        }
 
-    await _supabase.from('cart_items').insert(payload);
+        existingPayload['quantity'] =
+            (existingPayload['quantity'] as int) + entry.quantity;
+      }
+
+      final payload = payloadByKey.values.toList();
+
+      await _supabase.from('cart_items').insert(payload);
+    });
   }
 
   Future<void> _updateBackendRowQuantity(
@@ -593,6 +623,45 @@ class CartService {
     final storage = prefs ?? await SharedPreferences.getInstance();
     final jsonList = entries.map((entry) => entry.toJson()).toList();
     await storage.setString(_storageKey, jsonEncode(jsonList));
+  }
+
+  Future<T> _withSelectedSizeBackendCompatibility<T>(
+    Future<T> Function() action,
+  ) async {
+    try {
+      return await action();
+    } catch (error) {
+      if (_legacyNumericSelectedSizeBackend ||
+          !_isSelectedSizeBackendTypeError(error)) {
+        rethrow;
+      }
+
+      _legacyNumericSelectedSizeBackend = true;
+      return action();
+    }
+  }
+
+  Object? _selectedSizeForBackend(String? selectedSize) {
+    final normalized = selectedSize?.trim();
+    if (normalized == null || normalized.isEmpty) {
+      return null;
+    }
+
+    if (!_legacyNumericSelectedSizeBackend) {
+      return normalized;
+    }
+
+    return int.tryParse(normalized);
+  }
+
+  bool _isSelectedSizeBackendTypeError(Object error) {
+    final message = error.toString().toLowerCase();
+    final isIntegerCastError =
+        message.contains('invalid input syntax') || message.contains('22p02');
+    return (message.contains('selected_size') &&
+            (message.contains('integer') ||
+                message.contains('operator does not exist'))) ||
+        isIntegerCastError;
   }
 
   String get _storageKey {

@@ -17,7 +17,10 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({super.key, this.showBackButton = false});
+
+  final bool showBackButton;
+
   @override
   State<SettingsPage> createState() => _SettingsPageState();
 }
@@ -186,7 +189,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
-        appBar: AppBarSection(),
+        appBar: AppBarSection(showBackButton: widget.showBackButton),
         backgroundColor: AppColors.primaryColor,
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),

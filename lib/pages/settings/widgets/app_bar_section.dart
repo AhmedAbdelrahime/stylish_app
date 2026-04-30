@@ -6,7 +6,9 @@ import 'package:hungry/pages/product/widgets/product_app_bar.dart';
 import 'package:hungry/pages/settings/widgets/logout_dialog.dart';
 
 class AppBarSection extends StatefulWidget implements PreferredSizeWidget {
-  const AppBarSection({super.key});
+  const AppBarSection({super.key, this.showBackButton = false});
+
+  final bool showBackButton;
 
   @override
   State<AppBarSection> createState() => _AppBarSectionState();
@@ -54,7 +56,7 @@ class _AppBarSectionState extends State<AppBarSection> {
 
   @override
   Widget build(BuildContext context) {
-    final canGoBack = Navigator.of(context).canPop();
+    final canGoBack = widget.showBackButton || Navigator.of(context).canPop();
 
     return ProductAppBar(
       text: 'Account',

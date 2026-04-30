@@ -170,20 +170,34 @@ class OrderService {
     }
 
     try {
-      final orderId = await _supabase.rpc(
-        'create_order_with_items',
-        params: {'order_payload': orderPayload, 'item_payloads': itemPayloads},
+      return await _callCreateOrderRpc(
+        orderPayload: orderPayload,
+        itemPayloads: itemPayloads,
       );
-
-      return orderId.toString();
     } catch (error) {
-      final message = error.toString();
-      final rpcIsMissing =
-          message.contains("Could not find the function") ||
-          message.contains("function public.create_order_with_items") ||
-          message.contains("PGRST202");
+      if (_isSelectedSizeBackendTypeError(error, itemPayloads)) {
+        final compatibleItemPayloads = _legacySelectedSizePayloads(
+          itemPayloads,
+        );
 
-      if (!rpcIsMissing) {
+        try {
+          return await _callCreateOrderRpc(
+            orderPayload: orderPayload,
+            itemPayloads: compatibleItemPayloads,
+          );
+        } catch (retryError) {
+          if (!_isCreateOrderRpcMissing(retryError)) {
+            rethrow;
+          }
+
+          return _createOrderWithDirectInserts(
+            orderPayload: orderPayload,
+            itemPayloads: compatibleItemPayloads,
+          );
+        }
+      }
+
+      if (!_isCreateOrderRpcMissing(error)) {
         rethrow;
       }
 
@@ -192,6 +206,18 @@ class OrderService {
         itemPayloads: itemPayloads,
       );
     }
+  }
+
+  Future<String> _callCreateOrderRpc({
+    required Map<String, dynamic> orderPayload,
+    required List<Map<String, dynamic>> itemPayloads,
+  }) async {
+    final orderId = await _supabase.rpc(
+      'create_order_with_items',
+      params: {'order_payload': orderPayload, 'item_payloads': itemPayloads},
+    );
+
+    return orderId.toString();
   }
 
   Future<String> _createOrderWithDirectInserts({
@@ -214,9 +240,72 @@ class OrderService {
         .map((item) => {...item, 'order_id': orderId})
         .toList(growable: false);
 
-    await _supabase.from('order_items').insert(orderItems);
+    try {
+      await _supabase.from('order_items').insert(orderItems);
+    } catch (error) {
+      if (!_isSelectedSizeBackendTypeError(error, itemPayloads)) {
+        rethrow;
+      }
+
+      final compatibleOrderItems = _legacySelectedSizePayloads(
+        itemPayloads,
+      ).map((item) => {...item, 'order_id': orderId}).toList(growable: false);
+      await _supabase.from('order_items').insert(compatibleOrderItems);
+    }
 
     return orderId;
+  }
+
+  bool _isCreateOrderRpcMissing(Object error) {
+    final message = error.toString();
+    return message.contains("Could not find the function") ||
+        message.contains("function public.create_order_with_items") ||
+        message.contains("PGRST202");
+  }
+
+  bool _isSelectedSizeBackendTypeError(
+    Object error,
+    List<Map<String, dynamic>> itemPayloads,
+  ) {
+    final message = error.toString().toLowerCase();
+    final hasSelectedSize = itemPayloads.any((item) {
+      final selectedSize = item['selected_size']?.toString().trim();
+      return selectedSize != null && selectedSize.isNotEmpty;
+    });
+    final hasTextSelectedSize = itemPayloads.any((item) {
+      final selectedSize = item['selected_size']?.toString().trim();
+      return selectedSize != null &&
+          selectedSize.isNotEmpty &&
+          int.tryParse(selectedSize) == null;
+    });
+
+    return hasSelectedSize &&
+        ((message.contains('selected_size') && message.contains('integer')) ||
+            (hasTextSelectedSize &&
+                (message.contains('invalid input syntax') ||
+                    message.contains('22p02'))));
+  }
+
+  List<Map<String, dynamic>> _legacySelectedSizePayloads(
+    List<Map<String, dynamic>> itemPayloads,
+  ) {
+    return itemPayloads
+        .map(
+          (item) => {
+            ...item,
+            'selected_size': _legacySelectedSizeValue(item['selected_size']),
+          },
+        )
+        .toList(growable: false);
+  }
+
+  Object? _legacySelectedSizeValue(Object? selectedSize) {
+    final normalized = selectedSize?.toString().trim();
+    if (normalized == null || normalized.isEmpty) {
+      return null;
+    }
+
+    return int.tryParse(normalized);
   }
 
   String? _composeShippingAddress(dynamic profile) {

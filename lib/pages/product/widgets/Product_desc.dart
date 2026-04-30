@@ -15,6 +15,18 @@ class ProductDesc extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final stockLabel = !StoreConfig.enforceStockQuantity
+        ? context.tr('In stock')
+        : product.isInStock
+        ? (product.isLowStock
+              ? context.tr('Only {count} left', {
+                  'count': product.stockQuantity,
+                })
+              : context.tr('In stock ({count} available)', {
+                  'count': product.stockQuantity,
+                }))
+        : context.tr('Out of stock');
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
       child: Column(
@@ -74,15 +86,7 @@ class ProductDesc extends StatelessWidget {
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
-                  product.isInStock
-                      ? (product.isLowStock
-                            ? context.tr('Only {count} left', {
-                                'count': product.stockQuantity,
-                              })
-                            : context.tr('In stock ({count} available)', {
-                                'count': product.stockQuantity,
-                              }))
-                      : context.tr('Out of stock'),
+                  stockLabel,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,

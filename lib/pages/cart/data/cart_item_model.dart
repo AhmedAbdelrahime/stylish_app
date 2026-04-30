@@ -1,3 +1,4 @@
+import 'package:hungry/core/config/store_config.dart';
 import 'package:hungry/pages/home/models/product_model.dart';
 
 class CartItemModel {
@@ -58,9 +59,10 @@ class CartItemModel {
   bool get hasDiscount =>
       originalPrice != null && originalPrice! > 0 && originalPrice! > price;
 
-  bool get isInStock => stockQuantity > 0;
+  bool get isInStock => !StoreConfig.enforceStockQuantity || stockQuantity > 0;
 
-  bool get isLowStock => isInStock && stockQuantity <= 3;
+  bool get isLowStock =>
+      StoreConfig.enforceStockQuantity && isInStock && stockQuantity <= 3;
 
   double get lineTotal => price * quantity;
 
